@@ -26,7 +26,7 @@
         }
     </script>
     <style>
-        /* Pengaturan Scrollbar Bersih */
+        /* Pengaturan Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -52,16 +52,16 @@
         <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
             <!-- Brand / Logo Gambar -->
             <a href="#hero" class="flex items-center gap-2.5 group">
-                <img 
-                    id="navLogo"
-                    src="1000003180.jpg" 
-                    alt="Logo" 
-                    class="w-8 h-8 rounded-lg object-cover border border-zinc-200 dark:border-zinc-800 shadow-sm group-hover:scale-105 transition-transform"
-                    onerror="this.style.display='none'; document.getElementById('navInitial').classList.remove('hidden');"
-                >
-                <span id="navInitial" class="hidden w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-mono font-bold text-xs flex items-center justify-center">
-                    AZ
-                </span>
+                <div class="relative w-8 h-8 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-center bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-mono font-bold text-xs">
+                    <img 
+                        id="navLogo"
+                        src="IMG-20250615-WA0016.jpg" 
+                        alt="Logo Azim" 
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform absolute inset-0 z-10"
+                        onerror="this.style.display='none';"
+                    >
+                    <span id="navInitial">AZ</span>
+                </div>
                 <span id="navName" class="font-bold text-sm tracking-tight">Azim</span>
             </a>
 
@@ -100,7 +100,7 @@
         </div>
     </header>
 
-    <!-- KONTEN UTAMA DENGAN RENDER OTOMATIS -->
+    <!-- KONTEN UTAMA -->
     <main class="max-w-4xl mx-auto px-6 py-12 sm:py-20 space-y-20">
 
         <!-- 2. HERO SECTION -->
@@ -111,13 +111,16 @@
             </div>
 
             <div class="flex items-center gap-4 sm:gap-5">
-                <img 
-                    id="heroAvatar"
-                    src="1000003180.jpg" 
-                    alt="Foto Profil Azim" 
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0"
-                    onerror="this.style.display='none';"
-                >
+                <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0 bg-zinc-800 flex items-center justify-center text-zinc-200 font-mono font-bold text-xl">
+                    <img 
+                        id="heroAvatar"
+                        src="IMG-20250615-WA0016.jpg" 
+                        alt="Foto Profil Azim" 
+                        class="w-full h-full object-cover absolute inset-0 z-10"
+                        onerror="this.style.display='none';"
+                    >
+                    <span id="heroFallbackInitial">AZ</span>
+                </div>
                 <div class="space-y-1">
                     <h1 id="heroName" class="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         Azim
@@ -307,7 +310,8 @@
                 statusBadge: "Tersedia untuk Pekerjaan Full-Time & Konsultasi",
                 ringkasan: "Merancang dan membangun arsitektur web berperforma tinggi, skalabel, serta mudah dirawat dengan pendekatan kode yang bersih.",
                 tentangDetail: "Berpengalaman dalam pengembangan end-to-end mulai dari antarmuka pengguna hingga sistem backend terdistribusi. Saya memprioritaskan arsitektur sederhana yang menyelesaikan masalah nyata tanpa menambah beban dependensi yang tidak dibutuhkan.",
-                fotoProfil: "1000003180.jpg",
+                // Pastikan nama file foto di sini sama persis dengan yang diunggah ke GitHub!
+                fotoProfil: "IMG-20250615-WA0016.jpg",
                 email: "teanppu@gmail.com",
                 zonaWaktu: "WIB (UTC+7)",
                 copyright: "© 2026 Azim. Seluruh hak cipta dilindungi."
@@ -444,7 +448,7 @@
         };
 
         // =====================================================================
-        // LOGIKA PENERJEMAH DATA KE TAMPILAN (OTOMATIS)
+        // LOGIKA PENERJEMAH DATA KE TAMPILAN
         // =====================================================================
         document.addEventListener('DOMContentLoaded', () => {
             const P = DATA_PORTOFOLIO.profil;
@@ -464,8 +468,10 @@
             document.getElementById('footerTimezone').innerText = `Zona Waktu: ${P.zonaWaktu}`;
 
             if (P.fotoProfil) {
-                document.getElementById('navLogo').src = P.fotoProfil;
-                document.getElementById('heroAvatar').src = P.fotoProfil;
+                const navImg = document.getElementById('navLogo');
+                const heroImg = document.getElementById('heroAvatar');
+                navImg.src = P.fotoProfil;
+                heroImg.src = P.fotoProfil;
             }
 
             // 2. Render Statistik
