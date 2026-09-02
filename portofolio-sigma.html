@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Azim — Software Engineer & Solution Architect</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Pengaturan Scrollbar Bersih */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 3px;
+        }
+        .light ::-webkit-scrollbar-thumb {
+            background: #d4d4d8;
+        }
+        * {
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-zinc-200 dark:selection:bg-zinc-800">
+
+    <!-- 1. HEADER & NAVIGASI -->
+    <header class="sticky top-0 z-40 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+            <!-- Brand / Logo Gambar -->
+            <a href="#hero" class="flex items-center gap-2.5 group">
+                <img 
+                    id="navLogo"
+                    src="1000003180.jpg" 
+                    alt="Logo" 
+                    class="w-8 h-8 rounded-lg object-cover border border-zinc-200 dark:border-zinc-800 shadow-sm group-hover:scale-105 transition-transform"
+                    onerror="this.style.display='none'; document.getElementById('navInitial').classList.remove('hidden');"
+                >
+                <span id="navInitial" class="hidden w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-mono font-bold text-xs flex items-center justify-center">
+                    AZ
+                </span>
+                <span id="navName" class="font-bold text-sm tracking-tight">Azim</span>
+            </a>
+
+            <!-- Navigasi Menu Desktop -->
+            <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                <a href="#tentang" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Tentang</a>
+                <a href="#keahlian" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Keahlian</a>
+                <a href="#pengalaman" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Pengalaman</a>
+                <a href="#proyek" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Proyek</a>
+                <a href="#artikel" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Artikel</a>
+                <a href="#kontak" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Kontak</a>
+            </nav>
+
+            <!-- Aksi & Tombol Pengalih Tema -->
+            <div class="flex items-center gap-2">
+                <button id="themeToggle" aria-label="Ganti Mode Tema" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                    <svg id="moonIcon" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="sunIcon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+
+                <!-- Tombol Menu Mobile -->
+                <button id="mobileMenuBtn" aria-label="Buka Menu" class="md:hidden p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dropdown Menu Mobile -->
+        <div id="mobileMenu" class="hidden md:hidden px-6 py-4 space-y-3 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono">
+            <a href="#tentang" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">01. Tentang</a>
+            <a href="#keahlian" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">02. Keahlian</a>
+            <a href="#pengalaman" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">03. Pengalaman</a>
+            <a href="#proyek" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">04. Proyek</a>
+            <a href="#artikel" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">05. Artikel</a>
+            <a href="#kontak" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">06. Kontak</a>
+        </div>
+    </header>
+
+    <!-- KONTEN UTAMA DENGAN RENDER OTOMATIS -->
+    <main class="max-w-4xl mx-auto px-6 py-12 sm:py-20 space-y-20">
+
+        <!-- 2. HERO SECTION -->
+        <section id="hero" class="space-y-6">
+            <div id="heroBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono border border-emerald-500/20">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="heroBadgeText">Tersedia untuk Pekerjaan Full-Time & Konsultasi</span>
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-5">
+                <img 
+                    id="heroAvatar"
+                    src="1000003180.jpg" 
+                    alt="Foto Profil Azim" 
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0"
+                    onerror="this.style.display='none';"
+                >
+                <div class="space-y-1">
+                    <h1 id="heroName" class="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                        Azim
+                    </h1>
+                    <p id="heroRole" class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">
+                        Software Engineer & Solution Architect
+                    </p>
+                </div>
+            </div>
+
+            <p id="heroBio" class="text-base sm:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
+                Merancang dan membangun arsitektur web berperforma tinggi, skalabel, serta mudah dirawat dengan pendekatan kode yang bersih.
+            </p>
+
+            <!-- Tombol Aksi Cepat -->
+            <div class="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono">
+                <a href="#kontak" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold hover:opacity-90 transition-opacity">
+                    Mulai Diskusi &rarr;
+                </a>
+                <button onclick="salinEmailAzim()" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 transition-colors flex items-center gap-1.5">
+                    <span id="heroEmailLabel">teanppu@gmail.com</span>
+                    <span id="heroCopyStatus" class="text-[10px] text-zinc-400">(salin)</span>
+                </button>
+            </div>
+
+            <!-- Metrik Ringkas -->
+            <div id="statsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- 3. TENTANG & PRINSIP KERJA -->
+        <section id="tentang" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">01.</span>
+                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Tentang & Prinsip</h2>
+            </div>
+
+            <p id="aboutDetail" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </p>
+
+            <div id="principlesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- 4. MATRIKS KEAHLIAN TERSTRUKTUR -->
+        <section id="keahlian" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">02.</span>
+                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Matriks Keahlian</h2>
+            </div>
+
+            <div id="skillsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- 5. PENGALAMAN KERJA / LINIMASA -->
+        <section id="pengalaman" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">03.</span>
+                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Pengalaman Kerja</h2>
+            </div>
+
+            <div id="experienceContainer" class="space-y-8">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- 6. PROYEK PILIHAN -->
+        <section id="proyek" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">04.</span>
+                    <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Proyek Pilihan</h2>
+                </div>
+            </div>
+
+            <div id="projectsContainer" class="space-y-4">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- 7. CATATAN & ARTIKEL TEKNIS -->
+        <section id="artikel" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">05.</span>
+                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Artikel & Riset</h2>
+            </div>
+
+            <div id="articlesContainer" class="space-y-3">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- 8. KONTAK & FORMULIR LENGKAP -->
+        <section id="kontak" class="space-y-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">06.</span>
+                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Kontak & Kolaborasi</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Kolom Kiri: Informasi Kontak -->
+                <div class="space-y-4">
+                    <p id="contactDesc" class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Tertarik mendiskusikan proyek baru, evaluasi arsitektur sistem, atau peluang kerja sama? Silakan kirimkan pesan langsung melalui formulir atau kontak berikut.
+                    </p>
+
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
+                            <span class="text-zinc-700 dark:text-zinc-300" id="mainEmailVal">teanppu@gmail.com</span>
+                            <button onclick="salinEmailAzim()" class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline text-[11px]">
+                                Salin
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="socialLinksContainer" class="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
+                        <!-- Diisi otomatis oleh JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Formulir Pesan -->
+                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative">
+                    <form id="contactForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
+                        <div>
+                            <label for="name" class="block font-mono text-zinc-500 mb-1">Nama Lengkap *</label>
+                            <input type="text" id="name" required placeholder="Contoh: Budi Santoso" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400">
+                        </div>
+                        <div>
+                            <label for="email" class="block font-mono text-zinc-500 mb-1">Alamat Email *</label>
+                            <input type="email" id="email" required placeholder="nama@perusahaan.com" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400">
+                        </div>
+                        <div>
+                            <label for="message" class="block font-mono text-zinc-500 mb-1">Pesan Kebutuhan *</label>
+                            <textarea id="message" rows="3" required placeholder="Jelaskan kebutuhan atau topik diskusi Anda..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400"></textarea>
+                        </div>
+                        <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold font-mono hover:opacity-90 transition-opacity">
+                            Kirimkan Pesan
+                        </button>
+                    </form>
+
+                    <!-- Feedback Sukses Kirim -->
+                    <div id="formSuccess" class="hidden absolute inset-0 bg-white dark:bg-zinc-900 rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-2">
+                        <div class="text-emerald-500 font-bold text-sm">✓ Pesan Terkirim</div>
+                        <p class="text-xs text-zinc-500">Terima kasih atas pesan Anda. Azim akan segera menindaklanjuti via email.</p>
+                        <button onclick="resetContactForm()" class="mt-2 text-[11px] font-mono text-zinc-400 hover:underline">Kirim pesan lain</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 9. FOOTER -->
+    <footer class="border-t border-zinc-200 dark:border-zinc-800 py-8 bg-zinc-50 dark:bg-zinc-950">
+        <div class="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-400">
+            <div id="footerCopyright">© 2026 Azim. Seluruh hak cipta dilindungi.</div>
+            <div class="flex gap-4">
+                <span id="footerTimezone">Zona Waktu: WIB (UTC+7)</span>
+                <span>•</span>
+                <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100">Ke Atas ↑</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFIKASI SALIN EMAIL -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none z-50">
+        <div id="toastText" class="bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3.5 py-2 rounded-lg text-xs font-mono shadow-md">
+            ✓ Email berhasil disalin!
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         PUSAT PENGATURAN DATA (EDIT KONTEN ANDA DI BAGIAN INI SAJA)
+         ===================================================================== -->
+    <script>
+        const DATA_PORTOFOLIO = {
+            // 1. Profil Utama
+            profil: {
+                nama: "Azim",
+                inisial: "AZ",
+                peran: "Software Engineer & Solution Architect",
+                statusBadge: "Tersedia untuk Pekerjaan Full-Time & Konsultasi",
+                ringkasan: "Merancang dan membangun arsitektur web berperforma tinggi, skalabel, serta mudah dirawat dengan pendekatan kode yang bersih.",
+                tentangDetail: "Berpengalaman dalam pengembangan end-to-end mulai dari antarmuka pengguna hingga sistem backend terdistribusi. Saya memprioritaskan arsitektur sederhana yang menyelesaikan masalah nyata tanpa menambah beban dependensi yang tidak dibutuhkan.",
+                fotoProfil: "1000003180.jpg",
+                email: "teanppu@gmail.com",
+                zonaWaktu: "WIB (UTC+7)",
+                copyright: "© 2026 Azim. Seluruh hak cipta dilindungi."
+            },
+
+            // 2. Metrik / Statistik Ringkas
+            statistik: [
+                { nilai: "5+ Thn", label: "Pengalaman Teknis" },
+                { nilai: "35+", label: "Proyek Selesai" },
+                { nilai: "99.9%", label: "SLA Reliabilitas" },
+                { nilai: "<200ms", label: "Rata-rata Respon API" }
+            ],
+
+            // 3. Tiga Prinsip Utama
+            prinsip: [
+                {
+                    judul: "Clean Architecture",
+                    deskripsi: "Pemisahan modul logika yang jelas, teruji dengan automated testing, dan mudah didelegasikan."
+                },
+                {
+                    judul: "Efisiensi & Skalabilitas",
+                    deskripsi: "Optimasi kueri basis data dan strategi multi-layer caching untuk konsumsi sumber daya rendah."
+                },
+                {
+                    judul: "Komunikasi Terbuka",
+                    deskripsi: "Dokumentasi API terstandarisasi, estimasi pengerjaan transparan, dan pembaruan berkala."
+                }
+            ],
+
+            // 4. Matriks Keahlian
+            keahlian: [
+                {
+                    kategori: "Frontend",
+                    warnaDot: "bg-cyan-500",
+                    item: ["React / Next.js", "TypeScript", "Tailwind CSS", "State Management"]
+                },
+                {
+                    kategori: "Backend",
+                    warnaDot: "bg-emerald-500",
+                    item: ["Node.js / Express", "Go (Golang)", "RESTful & GraphQL", "Microservices"]
+                },
+                {
+                    kategori: "Database",
+                    warnaDot: "bg-indigo-500",
+                    item: ["PostgreSQL", "Redis Caching", "Prisma ORM", "Database Indexing"]
+                },
+                {
+                    kategori: "DevOps",
+                    warnaDot: "bg-amber-500",
+                    item: ["Docker Container", "AWS Cloud Basics", "GitHub Actions CI/CD", "Linux Server Admin"]
+                }
+            ],
+
+            // 5. Linimasa Pengalaman Kerja
+            pengalaman: [
+                {
+                    posisi: "Lead Software Engineer",
+                    perusahaan: "PT Digital Kreasi Nusantara — Jakarta",
+                    periode: "2023 — Sekarang",
+                    poin: [
+                        "Memimpin transformasi arsitektur layanan mikro berbasis Golang yang meningkatkan throughput API hingga 3x lipat.",
+                        "Mengurangi latensi pencarian data dengan optimasi indeks PostgreSQL dan redis distributed caching."
+                    ]
+                },
+                {
+                    posisi: "Senior Full-Stack Developer",
+                    perusahaan: "Finansial Solusi Mandiri — Bandung",
+                    periode: "2021 — 2023",
+                    poin: [
+                        "Mengembangkan modul dashboard monitoring transaksi keuangan dengan analitik grafik real-time.",
+                        "Mengintegrasikan 3 gateway pembayaran resmi dengan standar enkripsi data yang ketat."
+                    ]
+                },
+                {
+                    posisi: "Web Application Developer",
+                    perusahaan: "Studio Inovasi Media — Surabaya",
+                    periode: "2019 — 2021",
+                    poin: [
+                        "Membangun lebih dari 15 portal web interaktif berbasis React dan Node.js dengan kepatuhan SEO dan aksesibilitas tinggi."
+                    ]
+                }
+            ],
+
+            // 6. Proyek Pilihan
+            proyek: [
+                {
+                    judul: "OmniScale Metrics Hub",
+                    subjudul: "Platform Pemantauan Server & Ingestion Data",
+                    status: "Live",
+                    deskripsi: "Sistem analitik terdistribusi dengan visualisasi real-time, anomaly detector, dan webhook alerting ke Slack/Telegram.",
+                    tags: ["Next.js", "Go API", "PostgreSQL"],
+                    linkTautan: "https://github.com"
+                },
+                {
+                    judul: "PayFlow Engine API",
+                    subjudul: "Orkestrator Gerbang Pembayaran Multi-Kanal",
+                    status: "Production",
+                    deskripsi: "Konsolidasi pembayaran multi-vendor dengan proteksi idempotensi transaksi dan auto-reconciliation harian.",
+                    tags: ["NestJS", "TypeScript", "Docker"],
+                    linkTautan: "https://github.com"
+                },
+                {
+                    judul: "CloudSync CLI Backup",
+                    subjudul: "Otomatisasi Backup Basis Data ke Cloud S3",
+                    status: "Open Source",
+                    deskripsi: "Perkakas CLI mandiri untuk mencadangkan database berkala dengan enkripsi AES dan verifikasi checksum instan.",
+                    tags: ["Go", "AWS S3", "Linux CLI"],
+                    linkTautan: "https://github.com"
+                }
+            ],
+
+            // 7. Catatan / Artikel Teknis
+            artikel: [
+                {
+                    judul: "Strategi Multi-Layer Caching pada REST API Skala Tinggi",
+                    deskripsi: "Mengatasi cache invalidation dan konsistensi data pada database relasional.",
+                    tahun: "2026",
+                    linkTautan: "#artikel"
+                },
+                {
+                    judul: "Panduan Praktis Indexing PostgreSQL untuk Kueri Kompleks",
+                    deskripsi: "Studi kasus penurunan waktu eksekusi kueri agregasi dari 1.2s menjadi 45ms.",
+                    tahun: "2026",
+                    linkTautan: "#artikel"
+                }
+            ],
+
+            // 8. Tautan Media Sosial / Jejaring
+            sosial: [
+                { nama: "GitHub", url: "https://github.com" },
+                { nama: "LinkedIn", url: "https://linkedin.com" },
+                { nama: "Twitter", url: "https://twitter.com" }
+            ]
+        };
+
+        // =====================================================================
+        // LOGIKA PENERJEMAH DATA KE TAMPILAN (OTOMATIS)
+        // =====================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const P = DATA_PORTOFOLIO.profil;
+
+            // 1. Terapkan Data Profil
+            document.getElementById('pageTitle').innerText = `${P.nama} — ${P.peran}`;
+            document.getElementById('navName').innerText = P.nama;
+            document.getElementById('navInitial').innerText = P.inisial;
+            document.getElementById('heroName').innerText = P.nama;
+            document.getElementById('heroRole').innerText = P.peran;
+            document.getElementById('heroBio').innerText = P.ringkasan;
+            document.getElementById('aboutDetail').innerText = P.tentangDetail;
+            document.getElementById('heroBadgeText').innerText = P.statusBadge;
+            document.getElementById('heroEmailLabel').innerText = P.email;
+            document.getElementById('mainEmailVal').innerText = P.email;
+            document.getElementById('footerCopyright').innerText = P.copyright;
+            document.getElementById('footerTimezone').innerText = `Zona Waktu: ${P.zonaWaktu}`;
+
+            if (P.fotoProfil) {
+                document.getElementById('navLogo').src = P.fotoProfil;
+                document.getElementById('heroAvatar').src = P.fotoProfil;
+            }
+
+            // 2. Render Statistik
+            const statsContainer = document.getElementById('statsContainer');
+            statsContainer.innerHTML = DATA_PORTOFOLIO.statistik.map(item => `
+                <div>
+                    <div class="text-xl font-bold font-mono">${item.nilai}</div>
+                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">${item.label}</div>
+                </div>
+            `).join('');
+
+            // 3. Render Tiga Prinsip
+            const principlesContainer = document.getElementById('principlesContainer');
+            principlesContainer.innerHTML = DATA_PORTOFOLIO.prinsip.map(item => `
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 space-y-1.5">
+                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">${item.judul}</h3>
+                    <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">${item.deskripsi}</p>
+                </div>
+            `).join('');
+
+            // 4. Render Keahlian
+            const skillsContainer = document.getElementById('skillsContainer');
+            skillsContainer.innerHTML = DATA_PORTOFOLIO.keahlian.map(cat => `
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2">
+                    <div class="font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full ${cat.warnaDot}"></span>
+                        ${cat.kategori}
+                    </div>
+                    <div class="text-zinc-500 dark:text-zinc-400 space-y-1">
+                        ${cat.item.map(skill => `<div>• ${skill}</div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            // 5. Render Pengalaman
+            const expContainer = document.getElementById('experienceContainer');
+            expContainer.innerHTML = DATA_PORTOFOLIO.pengalaman.map(exp => `
+                <div class="space-y-2">
+                    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+                        <div>
+                            <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${exp.posisi}</h3>
+                            <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400">${exp.perusahaan}</p>
+                        </div>
+                        <span class="text-xs font-mono text-zinc-400">${exp.periode}</span>
+                    </div>
+                    <ul class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc list-inside leading-relaxed">
+                        ${exp.poin.map(p => `<li>${p}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+
+            // 6. Render Proyek
+            const projectsContainer = document.getElementById('projectsContainer');
+            projectsContainer.innerHTML = DATA_PORTOFOLIO.proyek.map(proj => `
+                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${proj.judul}</h3>
+                            <p class="text-xs font-mono text-zinc-400">${proj.subjudul}</p>
+                        </div>
+                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">${proj.status}</span>
+                    </div>
+                    <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">${proj.deskripsi}</p>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-xs font-mono">
+                        <div class="flex gap-2 text-zinc-400">
+                            ${proj.tags.map((t, idx) => `<span>${t}</span>${idx < proj.tags.length - 1 ? '<span>•</span>' : ''}`).join('')}
+                        </div>
+                        <a href="${proj.linkTautan}" target="_blank" rel="noopener noreferrer" class="text-zinc-900 dark:text-zinc-100 hover:underline">Lihat Detail ↗</a>
+                    </div>
+                </div>
+            `).join('');
+
+            // 7. Render Artikel
+            const articlesContainer = document.getElementById('articlesContainer');
+            articlesContainer.innerHTML = DATA_PORTOFOLIO.artikel.map(art => `
+                <a href="${art.linkTautan}" class="block p-4 -mx-4 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900/60 transition-colors group">
+                    <div class="flex items-baseline justify-between gap-4">
+                        <h3 class="font-medium text-sm text-zinc-900 dark:text-zinc-100 group-hover:underline">${art.judul}</h3>
+                        <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${art.tahun}</span>
+                    </div>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">${art.deskripsi}</p>
+                </a>
+            `).join('');
+
+            // 8. Render Sosial Media
+            const socialContainer = document.getElementById('socialLinksContainer');
+            socialContainer.innerHTML = DATA_PORTOFOLIO.sosial.map((soc, idx) => `
+                <a href="${soc.url}" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-900 dark:hover:text-zinc-100 underline">${soc.nama}</a>
+                ${idx < DATA_PORTOFOLIO.sosial.length - 1 ? '<span>•</span>' : ''}
+            `).join('');
+        });
+
+        // =====================================================================
+        // LOGIKA INTERAKTIF (TEMA, MENU MOBILE, SALIN EMAIL, FORM)
+        // =====================================================================
+        
+        // 1. Pengalih Tema (Dark / Light)
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // 2. Menu Mobile Navigasi
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // 3. Salin Email
+        function salinEmailAzim() {
+            const email = DATA_PORTOFOLIO.profil.email;
+            const dummy = document.createElement('textarea');
+            dummy.value = email;
+            document.body.appendChild(dummy);
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').innerText = `✓ Email ${email} berhasil disalin!`;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // 4. Penanganan Formulir Pesan
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = 'Mengirimkan...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('formSuccess').classList.remove('hidden');
+                btn.innerText = 'Kirimkan Pesan';
+                btn.disabled = false;
+                document.getElementById('contactForm').reset();
+            }, 600);
+        }
+
+        function resetContactForm() {
+            document.getElementById('formSuccess').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
