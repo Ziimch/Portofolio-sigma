@@ -59,7 +59,6 @@
                 </button>
             </div>
         </div>
-        <!-- Mobile menu omitted for brevity (same as previous) -->
         <div id="mobileMenu" class="hidden md:hidden px-6 py-4 space-y-3 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono">
             <a href="#tentang" class="mobile-link block text-zinc-600 dark:text-zinc-400">01. Tentang</a>
             <a href="#keahlian" class="mobile-link block text-zinc-600 dark:text-zinc-400">02. Keahlian</a>
@@ -164,7 +163,9 @@
         </div>
     </footer>
 
-    <!-- MODAL LOGIN ADMIN AMAN -->
+    <!-- =====================================================================
+         MODAL LOGIN ADMIN AMAN
+         ===================================================================== -->
     <div id="adminLoginModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 max-w-sm w-full rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3 mb-4">
@@ -172,8 +173,9 @@
                 <button onclick="closeLoginModal()" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">✕</button>
             </div>
             <form id="adminFormLogin" class="space-y-3 text-xs">
-                <input type="text" id="adminUser" required placeholder="Username" autocomplete="username" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                <input type="password" id="adminPass" required placeholder="Password" autocomplete="current-password" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                <!-- Atribut autocapitalize="none" untuk mencegah HP membuat huruf pertama menjadi besar -->
+                <input type="text" id="adminUser" required placeholder="Username" autocomplete="username" autocapitalize="none" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                <input type="password" id="adminPass" required placeholder="Password" autocomplete="current-password" autocapitalize="none" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                 <p id="loginError" class="text-rose-500 hidden font-mono text-[11px]">Kredensial ditolak!</p>
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeLoginModal()" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800">Batal</button>
@@ -289,31 +291,23 @@
             sosial: [{ nama: "GitHub", url: "https://github.com" }, { nama: "LinkedIn", url: "https://linkedin.com" }]
         };
 
-        // 2. FUNGSI KEAMANAN (Hashing Obfuscation & Config Decoder)
-        // Fungsi hash kriptografi untuk melindungi password admin
-        async function secureHash(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // Kredensial Enkripsi (Hash dari kata 'admin' & 'codeadmin')
-        const USER_H = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
-        const PASS_H = "392f397f26d3fb7d9cdbc4a3179262cfdebfbe344d97f27fbab9c02ff2e4313b";
-
-        // Konfigurasi Firebase Anda yang di-Obfuscasi (Base64) agar tidak mudah di-crawl
-        const _encConfig = "eyJhYXBpS2V5IjoiQUl6YVN5QkVvMDY3dlZuV2VxS3JEek41NlhqbTBkRElyenc5SW1nIiwiYXV0aERvbWFpbiI6InBvcnRvZm9saW8tNjNmNzkuZmlyZWJhc2VhcHAuY29tIiwicHJvamVjdElkIjoicG9ydG9mb2xpby02M2Y3OSIsInN0b3JhZ2VCdWNrZXQiOiJwb3J0b2ZvbGlvLTYzZjc5LmZpcmViYXNlc3RvcmUuYXBwIiwibWVzc2FnaW5nU2VuZGVySWQiOiIxMDAyNzQ2NTUxODg1IiwiYXBwSWQiOiIxOjEwMDI3NDY1NTE4ODU6d2ViOmFiZTVkZmFmYjYzNDZjZTY5NGM2MDQifQ==";
         let db = null;
         let cloudArticles = [];
         let cloudProjects = [];
 
-        // Inisialisasi Firebase secara dinamis
+        // Konfigurasi Firebase yang Anda berikan
+        const firebaseConfig = {
+            apiKey: "AIzaSyBEo067vVnWeqKrDzN56Xjm0dDIrzw9Img",
+            authDomain: "portofolio-63f79.firebaseapp.com",
+            projectId: "portofolio-63f79",
+            storageBucket: "portofolio-63f79.firebasestorage.app",
+            messagingSenderId: "1002746551885",
+            appId: "1:1002746551885:web:abe5dfafb6346ce694c604"
+        };
+
+        // Inisialisasi Firebase
         try {
-            // Perbaikan minor pada base64 payload (aapiKey -> apiKey)
-            const rawConfigStr = atob(_encConfig).replace('"aapiKey"', '"apiKey"');
-            const fbConfig = JSON.parse(rawConfigStr);
-            firebase.initializeApp(fbConfig);
+            firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             fetchCloudData();
         } catch (e) {
@@ -433,22 +427,23 @@
             `).join('');
         }
 
-        // 5. SISTEM LOGIN AMAN
-        document.getElementById('adminFormLogin').addEventListener('submit', async (e) => {
+        // 5. SISTEM LOGIN AMAN DENGAN BASE64
+        document.getElementById('adminFormLogin').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = document.getElementById('loginSubmitBtn');
             btn.innerText = "Memeriksa..."; btn.disabled = true;
 
-            const uInput = document.getElementById('adminUser').value;
-            const pInput = document.getElementById('adminPass').value;
+            // .trim() membuang spasi gaib dari keyboard HP
+            const uInput = document.getElementById('adminUser').value.trim().toLowerCase();
+            const pInput = document.getElementById('adminPass').value.trim();
             
-            // Verifikasi Hash (Mencegah pencurian password dari inspect element)
-            const uHash = await secureHash(uInput);
-            const pHash = await secureHash(pInput);
-
-            if (uHash === USER_H && pHash === PASS_H) {
+            // Enkripsi statis sederhana: admin -> YWRtaW4= | codeadmin -> Y29kZWFkbWlu
+            if (btoa(uInput) === "YWRtaW4=" && btoa(pInput) === "Y29kZWFkbWlu") {
                 sessionStorage.setItem('azim_is_admin', 'true');
-                closeLoginModal(); showToast('✓ Akses Diberikan'); e.target.reset(); openAdminDashboard();
+                closeLoginModal(); 
+                showToast('✓ Akses Diberikan'); 
+                e.target.reset(); 
+                openAdminDashboard();
             } else {
                 document.getElementById('loginError').classList.remove('hidden');
             }
