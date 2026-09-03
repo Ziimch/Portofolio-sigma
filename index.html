@@ -5,684 +5,465 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Azim — Software Engineer & Solution Architect</title>
     
-    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    }
-                }
-            }
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] } } } }
     </script>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
-        /* Pengaturan Scrollbar Bersih */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3f3f46;
-            border-radius: 3px;
-        }
-        .light ::-webkit-scrollbar-thumb {
-            background: #d4d4d8;
-        }
-        * {
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        .light ::-webkit-scrollbar-thumb { background: #d4d4d8; }
+        * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
     </style>
 </head>
 <body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-zinc-200 dark:selection:bg-zinc-800">
 
-    <!-- 1. HEADER & NAVIGASI -->
     <header class="sticky top-0 z-40 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
         <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-            <!-- Brand / Logo Gambar -->
             <a href="#hero" class="flex items-center gap-2.5 group">
-                <div class="relative w-8 h-8 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-center bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-mono font-bold text-xs">
-                    <img 
-                        id="navLogo"
-                        src="IMG-20250615-WA0016.jpg" 
-                        alt="Logo Azim" 
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform absolute inset-0 z-10"
-                        onerror="this.style.display='none';"
-                    >
-                    <span id="navInitial">AZ</span>
-                </div>
+                <img id="navLogo" src="1000003180.jpg" alt="Logo" class="w-8 h-8 rounded-lg object-cover border border-zinc-200 dark:border-zinc-800 shadow-sm group-hover:scale-105 transition-transform" onerror="this.style.display='none'; document.getElementById('navInitial').classList.remove('hidden');">
+                <span id="navInitial" class="hidden w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-mono font-bold text-xs flex items-center justify-center">AZ</span>
                 <span id="navName" class="font-bold text-sm tracking-tight">Azim</span>
             </a>
-
-            <!-- Navigasi Menu Desktop -->
             <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                <a href="#tentang" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Tentang</a>
-                <a href="#keahlian" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Keahlian</a>
-                <a href="#pengalaman" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Pengalaman</a>
-                <a href="#proyek" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Proyek</a>
-                <a href="#artikel" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Artikel</a>
-                <a href="#kontak" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Kontak</a>
+                <a href="#tentang" class="hover:text-zinc-900 dark:hover:text-zinc-100">Tentang</a>
+                <a href="#keahlian" class="hover:text-zinc-900 dark:hover:text-zinc-100">Keahlian</a>
+                <a href="#pengalaman" class="hover:text-zinc-900 dark:hover:text-zinc-100">Pengalaman</a>
+                <a href="#proyek" class="hover:text-zinc-900 dark:hover:text-zinc-100">Proyek</a>
+                <a href="#artikel" class="hover:text-zinc-900 dark:hover:text-zinc-100">Artikel</a>
+                <a href="#kontak" class="hover:text-zinc-900 dark:hover:text-zinc-100">Kontak</a>
             </nav>
-
-            <!-- Aksi & Tombol Pengalih Tema -->
             <div class="flex items-center gap-2">
-                <button id="themeToggle" aria-label="Ganti Mode Tema" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                <button onclick="handleLockIconClick()" title="Akses Sistem" class="p-2 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </button>
+                <button id="themeToggle" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <svg id="moonIcon" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg id="sunIcon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
-
-                <!-- Tombol Menu Mobile -->
-                <button id="mobileMenuBtn" aria-label="Buka Menu" class="md:hidden p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500">
+                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
         </div>
-
-        <!-- Dropdown Menu Mobile -->
         <div id="mobileMenu" class="hidden md:hidden px-6 py-4 space-y-3 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono">
-            <a href="#tentang" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">01. Tentang</a>
-            <a href="#keahlian" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">02. Keahlian</a>
-            <a href="#pengalaman" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">03. Pengalaman</a>
-            <a href="#proyek" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">04. Proyek</a>
-            <a href="#artikel" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">05. Artikel</a>
-            <a href="#kontak" class="mobile-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">06. Kontak</a>
+            <a href="#tentang" class="mobile-link block text-zinc-600 dark:text-zinc-400">01. Tentang</a>
+            <a href="#keahlian" class="mobile-link block text-zinc-600 dark:text-zinc-400">02. Keahlian</a>
+            <a href="#pengalaman" class="mobile-link block text-zinc-600 dark:text-zinc-400">03. Pengalaman</a>
+            <a href="#proyek" class="mobile-link block text-zinc-600 dark:text-zinc-400">04. Proyek</a>
+            <a href="#artikel" class="mobile-link block text-zinc-600 dark:text-zinc-400">05. Artikel</a>
+            <a href="#kontak" class="mobile-link block text-zinc-600 dark:text-zinc-400">06. Kontak</a>
         </div>
     </header>
 
-    <!-- KONTEN UTAMA -->
     <main class="max-w-4xl mx-auto px-6 py-12 sm:py-20 space-y-20">
-
-        <!-- 2. HERO SECTION -->
         <section id="hero" class="space-y-6">
             <div id="heroBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono border border-emerald-500/20">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="heroBadgeText">Tersedia untuk Pekerjaan Full-Time & Konsultasi</span>
             </div>
-
             <div class="flex items-center gap-4 sm:gap-5">
-                <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0 bg-zinc-800 flex items-center justify-center text-zinc-200 font-mono font-bold text-xl">
-                    <img 
-                        id="heroAvatar"
-                        src="IMG-20250615-WA0016.jpg" 
-                        alt="Foto Profil Azim" 
-                        class="w-full h-full object-cover absolute inset-0 z-10"
-                        onerror="this.style.display='none';"
-                    >
-                    <span id="heroFallbackInitial">AZ</span>
-                </div>
+                <img id="heroAvatar" src="1000003180.jpg" alt="Foto Profil" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0" onerror="this.style.display='none';">
                 <div class="space-y-1">
-                    <h1 id="heroName" class="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                        Azim
-                    </h1>
-                    <p id="heroRole" class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">
-                        Software Engineer & Solution Architect
-                    </p>
+                    <h1 id="heroName" class="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Azim</h1>
+                    <p id="heroRole" class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400"></p>
                 </div>
             </div>
-
-            <p id="heroBio" class="text-base sm:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
-                Merancang dan membangun arsitektur web berperforma tinggi, skalabel, serta mudah dirawat dengan pendekatan kode yang bersih.
-            </p>
-
-            <!-- Tombol Aksi Cepat -->
+            <p id="heroBio" class="text-base sm:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl"></p>
             <div class="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono">
-                <a href="#kontak" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold hover:opacity-90 transition-opacity">
-                    Mulai Diskusi &rarr;
-                </a>
-                <button onclick="salinEmailAzim()" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 transition-colors flex items-center gap-1.5">
-                    <span id="heroEmailLabel">teanppu@gmail.com</span>
-                    <span id="heroCopyStatus" class="text-[10px] text-zinc-400">(salin)</span>
+                <a href="#kontak" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold hover:opacity-90">Mulai Diskusi &rarr;</a>
+                <button onclick="salinEmailAzim()" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-1.5">
+                    <span id="heroEmailLabel"></span><span class="text-[10px] text-zinc-400">(salin)</span>
                 </button>
             </div>
-
-            <!-- Metrik Ringkas -->
-            <div id="statsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div id="statsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800"></div>
         </section>
 
-        <!-- 3. TENTANG & PRINSIP KERJA -->
         <section id="tentang" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">01.</span>
-                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Tentang & Prinsip</h2>
-            </div>
-
-            <p id="aboutDetail" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </p>
-
-            <div id="principlesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">01.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Tentang & Prinsip</h2></div>
+            <p id="aboutDetail" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed"></p>
+            <div id="principlesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs"></div>
         </section>
 
-        <!-- 4. MATRIKS KEAHLIAN TERSTRUKTUR -->
         <section id="keahlian" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">02.</span>
-                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Matriks Keahlian</h2>
-            </div>
-
-            <div id="skillsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">02.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Matriks Keahlian</h2></div>
+            <div id="skillsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono"></div>
         </section>
 
-        <!-- 5. PENGALAMAN KERJA / LINIMASA -->
         <section id="pengalaman" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">03.</span>
-                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Pengalaman Kerja</h2>
-            </div>
-
-            <div id="experienceContainer" class="space-y-8">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">03.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Pengalaman Kerja</h2></div>
+            <div id="experienceContainer" class="space-y-8"></div>
         </section>
 
-        <!-- 6. PROYEK PILIHAN -->
         <section id="proyek" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">04.</span>
-                    <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Proyek Pilihan</h2>
-                </div>
-            </div>
-
-            <div id="projectsContainer" class="space-y-4">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">04.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Proyek Pilihan</h2></div>
+            <div id="firebaseStatusProj" class="text-[10px] font-mono text-zinc-400 animate-pulse">Memuat data cloud...</div>
+            <div id="publicProjectsContainer" class="space-y-4"></div>
         </section>
 
-        <!-- 7. CATATAN & ARTIKEL TEKNIS -->
         <section id="artikel" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">05.</span>
-                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Artikel & Riset</h2>
-            </div>
-
-            <div id="articlesContainer" class="space-y-3">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">05.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Artikel & Riset</h2></div>
+            <div id="firebaseStatusArt" class="text-[10px] font-mono text-zinc-400 animate-pulse">Memuat data cloud...</div>
+            <div id="publicArticlesContainer" class="space-y-3"></div>
         </section>
 
-        <!-- 8. KONTAK & FORMULIR EMAIL LANGSUNG -->
         <section id="kontak" class="space-y-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">06.</span>
-                <h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 dark:text-zinc-500 font-semibold">Kontak & Kolaborasi</h2>
-            </div>
-
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">06.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Kontak & Kolaborasi</h2></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Kolom Kiri: Informasi Kontak Langsung -->
                 <div class="space-y-4">
-                    <p id="contactDesc" class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Tertarik mendiskusikan proyek baru, evaluasi arsitektur sistem, atau peluang kerja sama? Kirim pesan langsung lewat formulir di samping — pesan akan masuk langsung ke inbox email saya.
-                    </p>
-
+                    <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Silakan kirimkan pesan langsung melalui formulir atau kontak berikut.</p>
                     <div class="space-y-2 text-xs font-mono">
                         <div class="p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
-                            <span class="text-zinc-700 dark:text-zinc-300" id="mainEmailVal">teanppu@gmail.com</span>
-                            <button onclick="salinEmailAzim()" class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline text-[11px]">
-                                Salin
-                            </button>
+                            <span class="text-zinc-700 dark:text-zinc-300" id="mainEmailVal"></span>
+                            <button onclick="salinEmailAzim()" class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline text-[11px]">Salin</button>
                         </div>
                     </div>
-
-                    <div id="socialLinksContainer" class="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
-                        <!-- Diisi otomatis oleh JavaScript -->
-                    </div>
+                    <div id="socialLinksContainer" class="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2"></div>
                 </div>
-
-                <!-- Kolom Kanan: Formulir Pengiriman Pesan Email Aktif -->
-                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative overflow-hidden">
-                    <form id="contactForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
-                        <!-- Honeypot anti-spam bot (tersembunyi) -->
-                        <input type="text" id="_honey" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-
-                        <div>
-                            <label for="name" class="block font-mono text-zinc-500 mb-1">Nama Lengkap *</label>
-                            <input type="text" id="name" name="name" required placeholder="Contoh: Budi Santoso" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400">
-                        </div>
-                        <div>
-                            <label for="email" class="block font-mono text-zinc-500 mb-1">Alamat Email Anda *</label>
-                            <input type="email" id="email" name="email" required placeholder="nama@perusahaan.com" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400">
-                        </div>
-                        <div>
-                            <label for="message" class="block font-mono text-zinc-500 mb-1">Pesan Kebutuhan *</label>
-                            <textarea id="message" name="message" rows="3" required placeholder="Tuliskan topik bahasan atau tawaran proyek Anda..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400"></textarea>
-                        </div>
-
-                        <!-- Pesan Kesalahan Pengiriman -->
-                        <div id="formErrorMessage" class="hidden p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-mono">
-                            Gagal mengirimkan pesan. Silakan coba kembali atau kirim manual ke teanppu@gmail.com.
-                        </div>
-
-                        <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold font-mono hover:opacity-90 transition-all flex items-center justify-center gap-2">
-                            <span id="submitBtnText">Kirimkan ke Email</span>
-                            <span id="submitSpinner" class="hidden w-3.5 h-3.5 border-2 border-zinc-400 border-t-zinc-900 dark:border-t-zinc-100 rounded-full animate-spin"></span>
-                        </button>
+                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative">
+                    <form onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
+                        <input type="text" required placeholder="Nama Lengkap *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <input type="email" required placeholder="Alamat Email *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <textarea rows="3" required placeholder="Pesan Kebutuhan *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                        <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold font-mono">Kirimkan Pesan</button>
                     </form>
-
-                    <!-- Feedback Berhasil Terkirim -->
-                    <div id="formSuccess" class="hidden absolute inset-0 bg-white dark:bg-zinc-900 rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-2 z-20">
-                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg font-bold mb-1">
-                            ✓
-                        </div>
-                        <div class="text-zinc-900 dark:text-zinc-100 font-bold text-sm font-mono">Pesan Berhasil Terkirim!</div>
-                        <p class="text-xs text-zinc-500 max-w-xs">Pesan Anda telah diteruskan ke <span class="font-mono text-zinc-700 dark:text-zinc-300">teanppu@gmail.com</span>. Saya akan segera membalasnya.</p>
-                        <button onclick="resetContactForm()" class="mt-4 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
-                            Kirim Pesan Lain
-                        </button>
+                    <div id="formSuccess" class="hidden absolute inset-0 bg-white dark:bg-zinc-900 rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-2">
+                        <div class="text-emerald-500 font-bold text-sm">✓ Pesan Terkirim</div>
+                        <button onclick="document.getElementById('formSuccess').classList.add('hidden')" class="mt-2 text-[11px] font-mono text-zinc-400 hover:underline">Tutup</button>
                     </div>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <!-- 9. FOOTER -->
     <footer class="border-t border-zinc-200 dark:border-zinc-800 py-8 bg-zinc-50 dark:bg-zinc-950">
         <div class="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-400">
-            <div id="footerCopyright">© 2026 Azim. Seluruh hak cipta dilindungi.</div>
-            <div class="flex gap-4">
-                <span id="footerTimezone">Zona Waktu: WIB (UTC+7)</span>
-                <span>•</span>
-                <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100">Ke Atas ↑</a>
-            </div>
+            <div id="footerCopyright"></div>
+            <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100">Ke Atas ↑</a>
         </div>
     </footer>
 
-    <!-- TOAST NOTIFIKASI SALIN EMAIL -->
-    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none z-50">
-        <div id="toastText" class="bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3.5 py-2 rounded-lg text-xs font-mono shadow-md">
-            ✓ Email berhasil disalin!
+    <div id="adminLoginModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 max-w-sm w-full rounded-2xl p-6 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3 mb-4">
+                <h3 class="font-bold text-sm flex items-center gap-2"><span>🔐</span> Login Sistem</h3>
+                <button onclick="closeLoginModal()" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">✕</button>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3 text-xs">
+                <input type="text" id="adminUser" required placeholder="Username" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                <input type="password" id="adminPass" required placeholder="Password" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                <p id="loginError" class="text-rose-500 hidden font-mono text-[11px]">Kredensial tidak valid!</p>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeLoginModal()" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-white text-zinc-100 dark:text-zinc-900 font-semibold font-mono">Login</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- =====================================================================
-         PUSAT PENGATURAN DATA
-         ===================================================================== -->
+    <div id="adminDashboard" class="fixed inset-0 z-[70] hidden bg-zinc-50 dark:bg-zinc-950 flex-col md:flex-row overflow-hidden transition-all">
+        <div class="w-full md:w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between p-5 md:h-screen flex-shrink-0">
+            <div>
+                <div class="flex items-center gap-3 mb-8 px-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-600 flex items-center justify-center font-bold">AZ</div>
+                    <div>
+                        <h2 class="text-sm font-bold text-zinc-900 dark:text-white">Admin Cloud</h2>
+                        <p id="firebaseConnStatus" class="text-[10px] font-mono text-emerald-500 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span> Connected</p>
+                    </div>
+                </div>
+                <nav class="space-y-2">
+                    <button onclick="switchAdminTab('tabAnalitik')" id="btnTabAnalitik" class="admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono text-xs font-semibold">📊 Analitik</button>
+                    <button onclick="switchAdminTab('tabArtikel')" id="btnTabArtikel" class="admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold">📝 Kelola Artikel</button>
+                    <button onclick="switchAdminTab('tabProyek')" id="btnTabProyek" class="admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold">🚀 Kelola Proyek</button>
+                </nav>
+            </div>
+            <div class="space-y-2 mt-8 md:mt-0">
+                <button onclick="closeAdminDashboard()" class="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 font-mono text-xs hover:bg-zinc-100">Lihat Web Publik</button>
+                <button onclick="handleAdminLogout()" class="w-full px-4 py-2 rounded-lg bg-rose-500/10 text-rose-600 font-mono text-xs hover:bg-rose-500/20">Logout</button>
+            </div>
+        </div>
+
+        <div class="flex-1 h-screen overflow-y-auto p-6 md:p-10 relative">
+            <div id="tabAnalitik" class="admin-tab-content block max-w-4xl mx-auto space-y-8">
+                <div><h1 class="text-2xl font-bold">Ringkasan Analitik</h1><p class="text-xs font-mono text-zinc-500">Data Mockup (Visual)</p></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800"><div class="text-xs font-mono text-zinc-500 mb-2">Total Pengunjung</div><div class="text-3xl font-bold">1,245</div></div>
+                    <div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800"><div class="text-xs font-mono text-zinc-500 mb-2">Pesan Masuk</div><div class="text-3xl font-bold">12</div></div>
+                    <div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800"><div class="text-xs font-mono text-zinc-500 mb-2">Klik Konten</div><div class="text-3xl font-bold">850</div></div>
+                </div>
+            </div>
+
+            <div id="tabArtikel" class="admin-tab-content hidden max-w-3xl mx-auto space-y-8">
+                <div><h1 class="text-2xl font-bold">Manajemen Artikel</h1><p class="text-xs font-mono text-zinc-500 mt-1">Tersimpan di Cloud Database</p></div>
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
+                    <h3 class="font-bold text-sm mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-2">➕ Tulis Artikel Baru</h3>
+                    <form onsubmit="handleArticleUpload(event)" class="space-y-3 text-xs">
+                        <input type="text" id="aTitle" required placeholder="Judul Artikel..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" id="aYear" required value="2026" placeholder="Tahun" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                            <input type="text" id="aLink" required value="#artikel" placeholder="Link URL" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        </div>
+                        <textarea id="aDesc" rows="3" required placeholder="Ringkasan atau sinopsis artikel..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                        <button type="submit" id="btnSubmitArt" class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-semibold transition-colors">Unggah ke Cloud</button>
+                    </form>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm mb-4">🗂 Data Cloud Artikel</h3>
+                    <div id="adminArticleList" class="space-y-3"><div class="animate-pulse text-xs text-zinc-500 font-mono">Memuat database...</div></div>
+                    <h3 class="font-bold text-sm mt-8 mb-4 text-zinc-400">🔒 Artikel Statis (Bawaan)</h3>
+                    <div id="adminDefaultArticleList" class="space-y-3 opacity-60 pointer-events-none"></div>
+                </div>
+            </div>
+
+            <div id="tabProyek" class="admin-tab-content hidden max-w-3xl mx-auto space-y-8">
+                <div><h1 class="text-2xl font-bold">Manajemen Proyek</h1><p class="text-xs font-mono text-zinc-500 mt-1">Tersimpan di Cloud Database</p></div>
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
+                    <h3 class="font-bold text-sm mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-2">➕ Tambah Proyek Baru</h3>
+                    <form onsubmit="handleProjectUpload(event)" class="space-y-3 text-xs">
+                        <input type="text" id="pTitle" required placeholder="Judul Proyek..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <input type="text" id="pSub" required placeholder="Subjudul (cth: Web App Platform)..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <div class="grid grid-cols-2 gap-3">
+                            <select id="pStatus" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none text-zinc-500"><option value="Live">Live</option><option value="Production">Production</option><option value="Beta">Beta</option><option value="Open Source">Open Source</option></select>
+                            <input type="text" id="pLink" required value="https://github.com" placeholder="Link Tautan" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        </div>
+                        <input type="text" id="pTags" required placeholder="Teknologi (koma: React, Node, SQL)..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <textarea id="pDesc" rows="3" required placeholder="Deskripsi fitur dan tantangan proyek..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                        <button type="submit" id="btnSubmitProj" class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-semibold transition-colors">Unggah ke Cloud</button>
+                    </form>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm mb-4">🗂 Data Cloud Proyek</h3>
+                    <div id="adminProjectList" class="space-y-3"><div class="animate-pulse text-xs text-zinc-500 font-mono">Memuat database...</div></div>
+                    <h3 class="font-bold text-sm mt-8 mb-4 text-zinc-400">🔒 Proyek Statis (Bawaan)</h3>
+                    <div id="adminDefaultProjectList" class="space-y-3 opacity-60 pointer-events-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none z-[80]">
+        <div id="toastText" class="bg-zinc-900 dark:bg-white text-zinc-100 dark:text-zinc-900 px-4 py-2.5 rounded-xl text-xs font-mono font-semibold shadow-xl border border-zinc-800 dark:border-zinc-200">Notifikasi</div>
+    </div>
+
     <script>
+        // ---------------------------------------------------------
+        // 1. DATA STATIS BAWAAN
+        // ---------------------------------------------------------
         const DATA_PORTOFOLIO = {
-            // 1. Profil Utama
             profil: {
-                nama: "Azim",
-                inisial: "AZ",
-                peran: "Software Engineer & Solution Architect",
+                nama: "Azim", inisial: "AZ", peran: "Software Engineer & Solution Architect",
                 statusBadge: "Tersedia untuk Pekerjaan Full-Time & Konsultasi",
                 ringkasan: "Merancang dan membangun arsitektur web berperforma tinggi, skalabel, serta mudah dirawat dengan pendekatan kode yang bersih.",
-                tentangDetail: "Berpengalaman dalam pengembangan end-to-end mulai dari antarmuka pengguna hingga sistem backend terdistribusi. Saya memprioritaskan arsitektur sederhana yang menyelesaikan masalah nyata tanpa menambah beban dependensi yang tidak dibutuhkan.",
-                fotoProfil: "IMG-20250615-WA0016.jpg",
-                email: "teanppu@gmail.com",
-                zonaWaktu: "WIB (UTC+7)",
-                copyright: "© 2026 Azim. Seluruh hak cipta dilindungi."
+                tentangDetail: "Berpengalaman dalam pengembangan end-to-end mulai dari antarmuka pengguna hingga sistem backend terdistribusi.",
+                fotoProfil: "1000003180.jpg", email: "teanppu@gmail.com",
+                copyright: "© 2026 Azim. Seluruh hak cipta dilindungi.", zonaWaktu: "WIB (UTC+7)"
             },
-
-            // 2. Metrik Ringkas
-            statistik: [
-                { nilai: "5+ Thn", label: "Pengalaman Teknis" },
-                { nilai: "35+", label: "Proyek Selesai" },
-                { nilai: "99.9%", label: "SLA Reliabilitas" },
-                { nilai: "<200ms", label: "Rata-rata Respon API" }
-            ],
-
-            // 3. Tiga Prinsip Utama
-            prinsip: [
-                {
-                    judul: "Clean Architecture",
-                    deskripsi: "Pemisahan modul logika yang jelas, teruji dengan automated testing, dan mudah didelegasikan."
-                },
-                {
-                    judul: "Efisiensi & Skalabilitas",
-                    deskripsi: "Optimasi kueri basis data dan strategi multi-layer caching untuk konsumsi sumber daya rendah."
-                },
-                {
-                    judul: "Komunikasi Terbuka",
-                    deskripsi: "Dokumentasi API terstandarisasi, estimasi pengerjaan transparan, dan pembaruan berkala."
-                }
-            ],
-
-            // 4. Matriks Keahlian
-            keahlian: [
-                {
-                    kategori: "Frontend",
-                    warnaDot: "bg-cyan-500",
-                    item: ["React / Next.js", "TypeScript", "Tailwind CSS", "State Management"]
-                },
-                {
-                    kategori: "Backend",
-                    warnaDot: "bg-emerald-500",
-                    item: ["Node.js / Express", "Go (Golang)", "RESTful & GraphQL", "Microservices"]
-                },
-                {
-                    kategori: "Database",
-                    warnaDot: "bg-indigo-500",
-                    item: ["PostgreSQL", "Redis Caching", "Prisma ORM", "Database Indexing"]
-                },
-                {
-                    kategori: "DevOps",
-                    warnaDot: "bg-amber-500",
-                    item: ["Docker Container", "AWS Cloud Basics", "GitHub Actions CI/CD", "Linux Server Admin"]
-                }
-            ],
-
-            // 5. Linimasa Pengalaman Kerja
-            pengalaman: [
-                {
-                    posisi: "Lead Software Engineer",
-                    perusahaan: "PT Digital Kreasi Nusantara — Jakarta",
-                    periode: "2023 — Sekarang",
-                    poin: [
-                        "Memimpin transformasi arsitektur layanan mikro berbasis Golang yang meningkatkan throughput API hingga 3x lipat.",
-                        "Mengurangi latensi pencarian data dengan optimasi indeks PostgreSQL dan redis distributed caching."
-                    ]
-                },
-                {
-                    posisi: "Senior Full-Stack Developer",
-                    perusahaan: "Finansial Solusi Mandiri — Bandung",
-                    periode: "2021 — 2023",
-                    poin: [
-                        "Mengembangkan modul dashboard monitoring transaksi keuangan dengan analitik grafik real-time.",
-                        "Mengintegrasikan 3 gateway pembayaran resmi dengan standar enkripsi data yang ketat."
-                    ]
-                },
-                {
-                    posisi: "Web Application Developer",
-                    perusahaan: "Studio Inovasi Media — Surabaya",
-                    periode: "2019 — 2021",
-                    poin: [
-                        "Membangun lebih dari 15 portal web interaktif berbasis React dan Node.js dengan kepatuhan SEO dan aksesibilitas tinggi."
-                    ]
-                }
-            ],
-
-            // 6. Proyek Pilihan
-            proyek: [
-                {
-                    judul: "OmniScale Metrics Hub",
-                    subjudul: "Platform Pemantauan Server & Ingestion Data",
-                    status: "Live",
-                    deskripsi: "Sistem analitik terdistribusi dengan visualisasi real-time, anomaly detector, dan webhook alerting ke Slack/Telegram.",
-                    tags: ["Next.js", "Go API", "PostgreSQL"],
-                    linkTautan: "https://github.com"
-                },
-                {
-                    judul: "PayFlow Engine API",
-                    subjudul: "Orkestrator Gerbang Pembayaran Multi-Kanal",
-                    status: "Production",
-                    deskripsi: "Konsolidasi pembayaran multi-vendor dengan proteksi idempotensi transaksi dan auto-reconciliation harian.",
-                    tags: ["NestJS", "TypeScript", "Docker"],
-                    linkTautan: "https://github.com"
-                },
-                {
-                    judul: "CloudSync CLI Backup",
-                    subjudul: "Otomatisasi Backup Basis Data ke Cloud S3",
-                    status: "Open Source",
-                    deskripsi: "Perkakas CLI mandiri untuk mencadangkan database berkala dengan enkripsi AES dan verifikasi checksum instan.",
-                    tags: ["Go", "AWS S3", "Linux CLI"],
-                    linkTautan: "https://github.com"
-                }
-            ],
-
-            // 7. Catatan / Artikel Teknis
-            artikel: [
-                {
-                    judul: "Strategi Multi-Layer Caching pada REST API Skala Tinggi",
-                    deskripsi: "Mengatasi cache invalidation dan konsistensi data pada database relasional.",
-                    tahun: "2026",
-                    linkTautan: "#artikel"
-                },
-                {
-                    judul: "Panduan Praktis Indexing PostgreSQL untuk Kueri Kompleks",
-                    deskripsi: "Studi kasus penurunan waktu eksekusi kueri agregasi dari 1.2s menjadi 45ms.",
-                    tahun: "2026",
-                    linkTautan: "#artikel"
-                }
-            ],
-
-            // 8. Tautan Media Sosial
-            sosial: [
-                { nama: "GitHub", url: "https://github.com" },
-                { nama: "LinkedIn", url: "https://linkedin.com" },
-                { nama: "Twitter", url: "https://twitter.com" }
-            ]
+            statistik: [{ nilai: "5+ Thn", label: "Pengalaman Teknis" }, { nilai: "35+", label: "Proyek Selesai" }, { nilai: "99.9%", label: "SLA Reliabilitas" }, { nilai: "<200ms", label: "Rata-rata Respon API" }],
+            prinsip: [{ judul: "Clean Architecture", deskripsi: "Pemisahan modul logika yang jelas, teruji dengan automated testing, dan mudah didelegasikan." }, { judul: "Efisiensi & Skalabilitas", deskripsi: "Optimasi kueri basis data dan strategi multi-layer caching." }, { judul: "Komunikasi Terbuka", deskripsi: "Dokumentasi API terstandarisasi, estimasi pengerjaan transparan." }],
+            keahlian: [{ kategori: "Frontend", warnaDot: "bg-cyan-500", item: ["React / Next.js", "TypeScript", "Tailwind CSS"] }, { kategori: "Backend", warnaDot: "bg-emerald-500", item: ["Node.js / Express", "Go (Golang)", "RESTful API"] }, { kategori: "Database", warnaDot: "bg-indigo-500", item: ["PostgreSQL", "Redis Caching", "Prisma ORM"] }, { kategori: "DevOps", warnaDot: "bg-amber-500", item: ["Docker Container", "AWS Cloud Basics", "GitHub Actions"] }],
+            pengalaman: [{ posisi: "Lead Software Engineer", perusahaan: "PT Digital Kreasi", periode: "2023 — Sekarang", poin: ["Memimpin transformasi arsitektur Golang API."] }, { posisi: "Senior Full-Stack", perusahaan: "Solusi Mandiri", periode: "2021 — 2023", poin: ["Mengembangkan modul dashboard monitoring keuangan."] }],
+            proyekDefault: [{ judul: "OmniScale Hub", subjudul: "Platform Pemantauan Server", status: "Live", deskripsi: "Sistem analitik terdistribusi dengan visualisasi real-time.", tags: ["Next.js", "Go API"], linkTautan: "#" }, { judul: "PayFlow Engine", subjudul: "Orkestrator Pembayaran", status: "Production", deskripsi: "Konsolidasi multi-vendor dengan proteksi transaksi.", tags: ["NestJS", "Docker"], linkTautan: "#" }],
+            artikelDefault: [{ judul: "Strategi Multi-Layer Caching", deskripsi: "Mengatasi cache invalidation dan konsistensi data.", tahun: "2026", linkTautan: "#artikel" }, { judul: "Panduan Indexing PostgreSQL", deskripsi: "Studi kasus penurunan waktu eksekusi kueri.", tahun: "2026", linkTautan: "#artikel" }],
+            sosial: [{ nama: "GitHub", url: "https://github.com" }, { nama: "LinkedIn", url: "https://linkedin.com" }]
         };
 
-        // =====================================================================
-        // LOGIKA PENERJEMAH DATA KE TAMPILAN
-        // =====================================================================
+        let cloudArticles = [];
+        let cloudProjects = [];
+        let db = null;
+
+        // ---------------------------------------------------------
+        // 2. KONFIGURASI FIREBASE CLOUD (Sesuai dengan kredensial Anda)
+        // ---------------------------------------------------------
+        const firebaseConfig = {
+            apiKey: "AIzaSyBEo067vVnWeqKrDzN56Xjm0dDIrzw9Img",
+            authDomain: "portofolio-63f79.firebaseapp.com",
+            projectId: "portofolio-63f79",
+            storageBucket: "portofolio-63f79.firebasestorage.app",
+            messagingSenderId: "1002746551885",
+            appId: "1:1002746551885:web:abe5dfafb6346ce694c604"
+        };
+
+        // Inisialisasi Database
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        fetchCloudData();
+
+        // ---------------------------------------------------------
+        // 3. FUNGSI CLOUD DATABASE (Ambil, Tambah, Hapus)
+        // ---------------------------------------------------------
+        async function fetchCloudData() {
+            try {
+                // Ambil Artikel
+                const artSnapshot = await db.collection('artikel').orderBy('createdAt', 'desc').get();
+                cloudArticles = artSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                document.getElementById('firebaseStatusArt').classList.add('hidden');
+
+                // Ambil Proyek
+                const projSnapshot = await db.collection('proyek').orderBy('createdAt', 'desc').get();
+                cloudProjects = projSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                document.getElementById('firebaseStatusProj').classList.add('hidden');
+
+                syncAllViews();
+            } catch (error) {
+                console.error("Peringatan Firebase (wajar jika tabel belum dibuat): ", error);
+                document.getElementById('firebaseStatusArt').innerText = "Belum ada data di database (atau atur Rules ke Test Mode).";
+                document.getElementById('firebaseStatusProj').innerText = "Belum ada data di database (atau atur Rules ke Test Mode).";
+            }
+        }
+
+        async function handleArticleUpload(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitArt'); btn.innerText = "Menyimpan ke Cloud..."; btn.disabled = true;
+            try {
+                await db.collection('artikel').add({
+                    judul: document.getElementById('aTitle').value,
+                    tahun: document.getElementById('aYear').value,
+                    linkTautan: document.getElementById('aLink').value,
+                    deskripsi: document.getElementById('aDesc').value,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('✓ Artikel sukses di-cloud!');
+                e.target.reset(); fetchCloudData(); 
+            } catch(err) { showToast('Gagal: ' + err.message); }
+            btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
+        }
+
+        async function handleProjectUpload(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitProj'); btn.innerText = "Menyimpan ke Cloud..."; btn.disabled = true;
+            try {
+                const tagsStr = document.getElementById('pTags').value;
+                const tagsArray = tagsStr.split(',').map(tag => tag.trim()).filter(tag => tag !== "");
+
+                await db.collection('proyek').add({
+                    judul: document.getElementById('pTitle').value, subjudul: document.getElementById('pSub').value,
+                    status: document.getElementById('pStatus').value, linkTautan: document.getElementById('pLink').value,
+                    deskripsi: document.getElementById('pDesc').value, tags: tagsArray,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('✓ Proyek sukses di-cloud!');
+                e.target.reset(); fetchCloudData(); 
+            } catch(err) { showToast('Gagal: ' + err.message); }
+            btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
+        }
+
+        async function deleteCloudItem(collectionName, id) {
+            if (confirm('Yakin ingin menghapus data ini dari Cloud secara permanen?')) {
+                try { await db.collection(collectionName).doc(id).delete(); showToast('✓ Data dihapus.'); fetchCloudData(); } 
+                catch(err) { showToast('Gagal hapus: ' + err.message); }
+            }
+        }
+
+        // ---------------------------------------------------------
+        // 4. RENDER APLIKASI (Tampilan)
+        // ---------------------------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
             const P = DATA_PORTOFOLIO.profil;
-
-            // 1. Profil
             document.getElementById('pageTitle').innerText = `${P.nama} — ${P.peran}`;
-            document.getElementById('navName').innerText = P.nama;
-            document.getElementById('navInitial').innerText = P.inisial;
-            document.getElementById('heroName').innerText = P.nama;
-            document.getElementById('heroRole').innerText = P.peran;
-            document.getElementById('heroBio').innerText = P.ringkasan;
-            document.getElementById('aboutDetail').innerText = P.tentangDetail;
-            document.getElementById('heroBadgeText').innerText = P.statusBadge;
-            document.getElementById('heroEmailLabel').innerText = P.email;
-            document.getElementById('mainEmailVal').innerText = P.email;
-            document.getElementById('footerCopyright').innerText = P.copyright;
-            document.getElementById('footerTimezone').innerText = `Zona Waktu: ${P.zonaWaktu}`;
+            document.getElementById('navName').innerText = P.nama; document.getElementById('navInitial').innerText = P.inisial;
+            document.getElementById('heroName').innerText = P.nama; document.getElementById('heroRole').innerText = P.peran;
+            document.getElementById('heroBio').innerText = P.ringkasan; document.getElementById('aboutDetail').innerText = P.tentangDetail;
+            document.getElementById('heroBadgeText').innerText = P.statusBadge; document.getElementById('mainEmailVal').innerText = P.email;
+            document.getElementById('heroEmailLabel').innerText = P.email; document.getElementById('footerCopyright').innerText = P.copyright;
+            if(P.fotoProfil) { document.getElementById('navLogo').src = P.fotoProfil; document.getElementById('heroAvatar').src = P.fotoProfil; }
 
-            if (P.fotoProfil) {
-                const navImg = document.getElementById('navLogo');
-                const heroImg = document.getElementById('heroAvatar');
-                navImg.src = P.fotoProfil;
-                heroImg.src = P.fotoProfil;
-            }
+            document.getElementById('statsContainer').innerHTML = DATA_PORTOFOLIO.statistik.map(i => `<div><div class="text-xl font-bold font-mono">${i.nilai}</div><div class="text-xs text-zinc-500 mt-0.5">${i.label}</div></div>`).join('');
+            document.getElementById('principlesContainer').innerHTML = DATA_PORTOFOLIO.prinsip.map(i => `<div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40"><h3 class="font-semibold">${i.judul}</h3><p class="text-zinc-500 mt-1">${i.deskripsi}</p></div>`).join('');
+            document.getElementById('skillsContainer').innerHTML = DATA_PORTOFOLIO.keahlian.map(c => `<div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2"><div class="font-semibold flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full ${c.warnaDot}"></span>${c.kategori}</div><div class="text-zinc-500 space-y-1">${c.item.map(s => `<div>• ${s}</div>`).join('')}</div></div>`).join('');
+            document.getElementById('experienceContainer').innerHTML = DATA_PORTOFOLIO.pengalaman.map(e => `<div class="space-y-2"><div class="flex justify-between gap-1"><div><h3 class="font-semibold text-sm">${e.posisi}</h3><p class="text-xs font-mono text-zinc-500">${e.perusahaan}</p></div><span class="text-xs font-mono text-zinc-400">${e.periode}</span></div><ul class="text-xs text-zinc-600 dark:text-zinc-400 list-disc list-inside">${e.poin.map(p => `<li>${p}</li>`).join('')}</ul></div>`).join('');
+            document.getElementById('socialLinksContainer').innerHTML = DATA_PORTOFOLIO.sosial.map((soc, idx) => `<a href="${soc.url}" target="_blank" class="hover:underline">${soc.nama}</a>${idx < DATA_PORTOFOLIO.sosial.length - 1 ? '<span>•</span>' : ''}`).join('');
 
-            // 2. Statistik
-            const statsContainer = document.getElementById('statsContainer');
-            statsContainer.innerHTML = DATA_PORTOFOLIO.statistik.map(item => `
-                <div>
-                    <div class="text-xl font-bold font-mono">${item.nilai}</div>
-                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">${item.label}</div>
-                </div>
-            `).join('');
+            syncAllViews();
+        });
 
-            // 3. Tiga Prinsip
-            const principlesContainer = document.getElementById('principlesContainer');
-            principlesContainer.innerHTML = DATA_PORTOFOLIO.prinsip.map(item => `
-                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 space-y-1.5">
-                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">${item.judul}</h3>
-                    <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">${item.deskripsi}</p>
-                </div>
-            `).join('');
-
-            // 4. Keahlian
-            const skillsContainer = document.getElementById('skillsContainer');
-            skillsContainer.innerHTML = DATA_PORTOFOLIO.keahlian.map(cat => `
-                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2">
-                    <div class="font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full ${cat.warnaDot}"></span>
-                        ${cat.kategori}
-                    </div>
-                    <div class="text-zinc-500 dark:text-zinc-400 space-y-1">
-                        ${cat.item.map(skill => `<div>• ${skill}</div>`).join('')}
-                    </div>
-                </div>
-            `).join('');
-
-            // 5. Pengalaman
-            const expContainer = document.getElementById('experienceContainer');
-            expContainer.innerHTML = DATA_PORTOFOLIO.pengalaman.map(exp => `
-                <div class="space-y-2">
-                    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
-                        <div>
-                            <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${exp.posisi}</h3>
-                            <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400">${exp.perusahaan}</p>
-                        </div>
-                        <span class="text-xs font-mono text-zinc-400">${exp.periode}</span>
-                    </div>
-                    <ul class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc list-inside leading-relaxed">
-                        ${exp.poin.map(p => `<li>${p}</li>`).join('')}
-                    </ul>
-                </div>
-            `).join('');
-
-            // 6. Proyek
-            const projectsContainer = document.getElementById('projectsContainer');
-            projectsContainer.innerHTML = DATA_PORTOFOLIO.proyek.map(proj => `
-                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
-                    <div class="flex items-start justify-between gap-2">
-                        <div>
-                            <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${proj.judul}</h3>
-                            <p class="text-xs font-mono text-zinc-400">${proj.subjudul}</p>
-                        </div>
-                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">${proj.status}</span>
-                    </div>
-                    <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">${proj.deskripsi}</p>
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-xs font-mono">
-                        <div class="flex gap-2 text-zinc-400">
-                            ${proj.tags.map((t, idx) => `<span>${t}</span>${idx < proj.tags.length - 1 ? '<span>•</span>' : ''}`).join('')}
-                        </div>
-                        <a href="${proj.linkTautan}" target="_blank" rel="noopener noreferrer" class="text-zinc-900 dark:text-zinc-100 hover:underline">Lihat Detail ↗</a>
-                    </div>
-                </div>
-            `).join('');
-
-            // 7. Artikel
-            const articlesContainer = document.getElementById('articlesContainer');
-            articlesContainer.innerHTML = DATA_PORTOFOLIO.artikel.map(art => `
+        function syncAllViews() {
+            // Publik View
+            const allArticles = [...cloudArticles, ...DATA_PORTOFOLIO.artikelDefault];
+            document.getElementById('publicArticlesContainer').innerHTML = allArticles.map(art => `
                 <a href="${art.linkTautan}" class="block p-4 -mx-4 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900/60 transition-colors group">
-                    <div class="flex items-baseline justify-between gap-4">
-                        <h3 class="font-medium text-sm text-zinc-900 dark:text-zinc-100 group-hover:underline">${art.judul}</h3>
-                        <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${art.tahun}</span>
-                    </div>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">${art.deskripsi}</p>
+                    <div class="flex items-baseline justify-between gap-4"><h3 class="font-medium text-sm group-hover:underline">${art.judul}</h3><span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${art.tahun}</span></div>
+                    <p class="text-xs text-zinc-500 mt-1">${art.deskripsi}</p>
                 </a>
             `).join('');
 
-            // 8. Sosial
-            const socialContainer = document.getElementById('socialLinksContainer');
-            socialContainer.innerHTML = DATA_PORTOFOLIO.sosial.map((soc, idx) => `
-                <a href="${soc.url}" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-900 dark:hover:text-zinc-100 underline">${soc.nama}</a>
-                ${idx < DATA_PORTOFOLIO.sosial.length - 1 ? '<span>•</span>' : ''}
+            const allProjects = [...cloudProjects, ...DATA_PORTOFOLIO.proyekDefault];
+            document.getElementById('publicProjectsContainer').innerHTML = allProjects.map(proj => `
+                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30">
+                    <div class="flex justify-between gap-2"><div><h3 class="font-semibold text-sm">${proj.judul}</h3><p class="text-xs font-mono text-zinc-400">${proj.subjudul}</p></div><span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">${proj.status}</span></div>
+                    <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-3">${proj.deskripsi}</p>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-xs font-mono mt-3">
+                        <div class="flex gap-2 text-zinc-400">${proj.tags.map((t, idx) => `<span>${t}</span>${idx < proj.tags.length - 1 ? '<span>•</span>' : ''}`).join('')}</div>
+                        <a href="${proj.linkTautan}" target="_blank" class="hover:underline">Lihat Detail ↗</a>
+                    </div>
+                </div>
             `).join('');
-        });
 
-        // =====================================================================
-        // LOGIKA INTERAKTIF (TEMA, MENU MOBILE, SALIN EMAIL)
-        // =====================================================================
+            // Admin View
+            document.getElementById('adminArticleList').innerHTML = cloudArticles.length === 0 ? '<p class="text-xs text-zinc-500 font-mono">Belum ada artikel di cloud.</p>' : cloudArticles.map(art => `
+                <div class="flex items-center justify-between p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+                    <div><h4 class="text-sm font-medium">${art.judul}</h4><p class="text-[11px] text-zinc-500 mt-0.5">${art.tahun} | ID: ${art.id.substring(0,6)}...</p></div>
+                    <button onclick="deleteCloudItem('artikel', '${art.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 text-xs font-mono hover:bg-rose-500 hover:text-white transition-colors">Hapus</button>
+                </div>
+            `).join('');
+            document.getElementById('adminDefaultArticleList').innerHTML = DATA_PORTOFOLIO.artikelDefault.map(art => `<div class="flex justify-between p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950"><div><h4 class="text-sm font-medium">${art.judul}</h4></div><span class="text-[10px] uppercase font-mono px-2 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Statik</span></div>`).join('');
+
+            document.getElementById('adminProjectList').innerHTML = cloudProjects.length === 0 ? '<p class="text-xs text-zinc-500 font-mono">Belum ada proyek di cloud.</p>' : cloudProjects.map(proj => `
+                <div class="flex items-center justify-between p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+                    <div><h4 class="text-sm font-medium">${proj.judul}</h4><p class="text-[11px] text-zinc-500 mt-0.5">${proj.status} | ID: ${proj.id.substring(0,6)}...</p></div>
+                    <button onclick="deleteCloudItem('proyek', '${proj.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 text-xs font-mono hover:bg-rose-500 hover:text-white transition-colors">Hapus</button>
+                </div>
+            `).join('');
+            document.getElementById('adminDefaultProjectList').innerHTML = DATA_PORTOFOLIO.proyekDefault.map(proj => `<div class="flex justify-between p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950"><div><h4 class="text-sm font-medium">${proj.judul}</h4></div><span class="text-[10px] uppercase font-mono px-2 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Statik</span></div>`).join('');
+        }
+
+        // ---------------------------------------------------------
+        // 5. UTILITIES (UI, Navigasi, dll)
+        // ---------------------------------------------------------
+        function handleLockIconClick() { if (sessionStorage.getItem('azim_is_admin') === 'true') { openAdminDashboard(); } else { document.getElementById('adminLoginModal').classList.remove('hidden'); } }
+        function closeLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); document.getElementById('loginError').classList.add('hidden'); }
         
-        // 1. Pengalih Tema (Dark / Light)
-        const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-        });
+        function handleAdminLogin(e) { 
+            e.preventDefault(); 
+            // =========================================================================
+            // GANTI 'admin' dan 'codeadmin' DI BAWAH INI DENGAN USERNAME & PASSWORD ANDA
+            // =========================================================================
+            const myUsername = 'admin';
+            const myPassword = 'codeadmin';
 
-        // 2. Menu Mobile Navigasi
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-        document.querySelectorAll('.mobile-link').forEach(link => {
-            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
-        });
-
-        // 3. Salin Email
-        function salinEmailAzim() {
-            const email = DATA_PORTOFOLIO.profil.email;
-            const dummy = document.createElement('textarea');
-            dummy.value = email;
-            document.body.appendChild(dummy);
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-
-            const toast = document.getElementById('toast');
-            document.getElementById('toastText').innerText = `✓ Email ${email} berhasil disalin!`;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 2500);
+            if (document.getElementById('adminUser').value === myUsername && document.getElementById('adminPass').value === myPassword) { 
+                sessionStorage.setItem('azim_is_admin', 'true'); 
+                closeLoginModal(); showToast('✓ Akses Diberikan'); e.target.reset(); openAdminDashboard(); 
+            } else { 
+                document.getElementById('loginError').classList.remove('hidden'); 
+            } 
+        }
+        
+        function handleAdminLogout() { sessionStorage.removeItem('azim_is_admin'); closeAdminDashboard(); showToast('Sesi berakhir.'); }
+        function openAdminDashboard() { document.getElementById('adminDashboard').classList.remove('hidden'); document.getElementById('adminDashboard').classList.add('flex'); document.body.style.overflow = 'hidden'; switchAdminTab('tabAnalitik'); }
+        function closeAdminDashboard() { document.getElementById('adminDashboard').classList.add('hidden'); document.getElementById('adminDashboard').classList.remove('flex'); document.body.style.overflow = 'auto'; }
+        
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => { el.classList.remove('block'); el.classList.add('hidden'); });
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => { btn.className = "admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold transition-colors"; });
+            document.getElementById(tabId).classList.remove('hidden'); document.getElementById(tabId).classList.add('block');
+            document.getElementById('btn' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).className = "admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono text-xs font-semibold transition-colors";
         }
 
-        // =====================================================================
-        // 4. INTEGRASI PENGIRIMAN EMAIL LANGSUNG KE teanppu@gmail.com
-        // =====================================================================
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            
-            const btn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('submitBtnText');
-            const spinner = document.getElementById('submitSpinner');
-            const errorMsg = document.getElementById('formErrorMessage');
-            const successCard = document.getElementById('formSuccess');
-
-            // Ambil data form
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const message = document.getElementById('message').value.trim();
-            const honey = document.getElementById('_honey').value;
-
-            // Proteksi Spam Bot Sederhana
-            if (honey) {
-                return;
-            }
-
-            // Atur status tombol ke kondisi 'Loading'
-            errorMsg.classList.add('hidden');
-            btn.disabled = true;
-            btnText.innerText = 'Mengirimkan...';
-            spinner.classList.remove('hidden');
-
-            try {
-                // Mengirim payload ke gateway FormSubmit
-                const response = await fetch("https://formsubmit.co/ajax/teanppu@gmail.com", {
-                    method: "POST",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        _subject: `Pesan Baru Portofolio dari: ${name}`,
-                        Nama: name,
-                        Email: email,
-                        Pesan: message,
-                        _template: "table"
-                    })
-                });
-
-                if (response.ok) {
-                    // Berhasil dikirim
-                    successCard.classList.remove('hidden');
-                    document.getElementById('contactForm').reset();
-                } else {
-                    throw new Error("Gagal mengirim pesan.");
-                }
-            } catch (err) {
-                errorMsg.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btnText.innerText = 'Kirimkan ke Email';
-                spinner.classList.add('hidden');
-            }
-        }
-
-        function resetContactForm() {
-            document.getElementById('formSuccess').classList.add('hidden');
-            document.getElementById('formErrorMessage').classList.add('hidden');
-        }
+        const themeToggle = document.getElementById('themeToggle'); themeToggle.addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn'); const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden')); document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => mobileMenu.classList.add('hidden')); });
+        function salinEmailAzim() { const dummy = document.createElement('textarea'); dummy.value = DATA_PORTOFOLIO.profil.email; document.body.appendChild(dummy); dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToast(`✓ Email disalin!`); }
+        function showToast(msg) { const toast = document.getElementById('toast'); document.getElementById('toastText').innerText = msg; toast.classList.remove('translate-y-20', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-20', 'opacity-0'); }, 2500); }
+        function handleFormSubmit(e) { e.preventDefault(); const btn = document.getElementById('submitBtn'); btn.innerText = 'Mengirimkan...'; btn.disabled = true; setTimeout(() => { document.getElementById('formSuccess').classList.remove('hidden'); btn.innerText = 'Kirimkan Pesan'; btn.disabled = false; e.target.reset(); }, 600); }
     </script>
 </body>
 </html>
