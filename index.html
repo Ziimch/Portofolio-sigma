@@ -153,9 +153,9 @@
                 </div>
                 <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative">
                     <form onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
-                        <input type="text" required placeholder="Nama Lengkap *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                        <input type="email" required placeholder="Alamat Email *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                        <textarea rows="3" required placeholder="Pesan Kebutuhan *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                        <input type="text" name="name" required placeholder="Nama Lengkap *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <input type="email" name="email" required placeholder="Alamat Email *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <textarea name="message" rows="3" required placeholder="Pesan Kebutuhan *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
                         <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold font-mono">Kirimkan Pesan</button>
                     </form>
                     <div id="formSuccess" class="hidden absolute inset-0 bg-white dark:bg-zinc-900 rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-2">
@@ -548,7 +548,32 @@
             document.body.removeChild(dummy);
         }
         function showToast(msg) { const toast = document.getElementById('toast'); document.getElementById('toastText').innerText = msg; toast.classList.remove('translate-y-20', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-20', 'opacity-0'); }, 2500); }
-        function handleFormSubmit(e) { e.preventDefault(); const btn = document.getElementById('submitBtn'); btn.innerText = 'Mengirimkan...'; btn.disabled = true; setTimeout(() => { document.getElementById('formSuccess').classList.remove('hidden'); btn.innerText = 'Kirimkan Pesan'; btn.disabled = false; e.target.reset(); }, 600); }
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = 'Mengirimkan...'; btn.disabled = true;
+
+            const formData = new FormData(form);
+            formData.append('_subject', `Pesan Baru dari Portofolio — ${formData.get('name')}`);
+            formData.append('_captcha', 'false');
+            formData.append('_template', 'table');
+
+            try {
+                const res = await fetch(`https://formsubmit.co/ajax/${DATA_PORTOFOLIO.profil.email}`, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' },
+                    body: formData
+                });
+                if (!res.ok) throw new Error('Gagal mengirim pesan');
+                document.getElementById('formSuccess').classList.remove('hidden');
+                form.reset();
+            } catch (err) {
+                console.error('Gagal mengirim form:', err);
+                showToast('✗ Gagal mengirim pesan, coba lagi.');
+            }
+            btn.innerText = 'Kirimkan Pesan'; btn.disabled = false;
+        }
     </script>
 </body>
 </html>
