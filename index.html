@@ -138,7 +138,7 @@
                             <button onclick="salinEmailAzim()" class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline text-[11px]">Salin</button>
                         </div>
                     </div>
-                    <div id="socialLinksContainer" class="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2"></div>
+                    <div id="socialLinksContainer" class="flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-500 pt-2"></div>
                 </div>
                 <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative">
                     <form onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
@@ -173,9 +173,9 @@
                 <button onclick="closeLoginModal()" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">✕</button>
             </div>
             <form id="adminFormLogin" class="space-y-3 text-xs">
-                <!-- Atribut autocapitalize="none" untuk mencegah HP membuat huruf pertama menjadi besar -->
-                <input type="text" id="adminUser" required placeholder="Username" autocomplete="username" autocapitalize="none" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                <input type="password" id="adminPass" required placeholder="Password" autocomplete="current-password" autocapitalize="none" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                <!-- Atribut pelindung tambahan untuk HP -->
+                <input type="text" id="adminUser" required placeholder="Username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                <input type="password" id="adminPass" required placeholder="Password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                 <p id="loginError" class="text-rose-500 hidden font-mono text-[11px]">Kredensial ditolak!</p>
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeLoginModal()" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800">Batal</button>
@@ -187,7 +187,6 @@
 
     <!-- PANEL DASHBOARD ADMIN (FULL SCREEN) -->
     <div id="adminDashboard" class="fixed inset-0 z-[70] hidden bg-zinc-50 dark:bg-zinc-950 flex-col md:flex-row overflow-hidden transition-all">
-        <!-- Sidebar Navigation -->
         <div class="w-full md:w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between p-5 md:h-screen flex-shrink-0">
             <div>
                 <div class="flex items-center gap-3 mb-8 px-2">
@@ -209,9 +208,7 @@
             </div>
         </div>
 
-        <!-- Content Dashboard -->
         <div class="flex-1 h-screen overflow-y-auto p-6 md:p-10 relative">
-            <!-- TAB: ANALITIK -->
             <div id="tabAnalitik" class="admin-tab-content block max-w-4xl mx-auto space-y-8">
                 <div><h1 class="text-2xl font-bold">Ringkasan Sistem</h1><p class="text-xs font-mono text-zinc-500">Koneksi Database Aktif</p></div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -220,7 +217,6 @@
                 </div>
             </div>
 
-            <!-- TAB: KELOLA ARTIKEL -->
             <div id="tabArtikel" class="admin-tab-content hidden max-w-3xl mx-auto space-y-8">
                 <div><h1 class="text-2xl font-bold">Manajemen Artikel</h1><p class="text-xs font-mono text-zinc-500">Sinkronisasi Real-Time ke Firebase</p></div>
                 <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
@@ -241,7 +237,6 @@
                 </div>
             </div>
 
-            <!-- TAB: KELOLA PROYEK -->
             <div id="tabProyek" class="admin-tab-content hidden max-w-3xl mx-auto space-y-8">
                 <div><h1 class="text-2xl font-bold">Manajemen Proyek</h1><p class="text-xs font-mono text-zinc-500">Sinkronisasi Real-Time ke Firebase</p></div>
                 <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
@@ -272,7 +267,7 @@
 
     <!-- SCRIPT UTAMA -->
     <script>
-        // 1. DATA BAWAAN
+        // 1. DATA BAWAAN (SOSIAL MEDIA DIPERBANYAK)
         const DATA_PORTOFOLIO = {
             profil: {
                 nama: "Azim", inisial: "AZ", peran: "Software Engineer & Solution Architect",
@@ -288,14 +283,21 @@
             pengalaman: [{ posisi: "Lead Software Engineer", perusahaan: "PT Digital Kreasi", periode: "2023 — Sekarang", poin: ["Memimpin transformasi arsitektur Golang API.", "Mengurangi latensi pencarian data."] }, { posisi: "Senior Full-Stack", perusahaan: "Solusi Mandiri", periode: "2021 — 2023", poin: ["Mengembangkan modul dashboard monitoring keuangan."] }],
             proyekDefault: [{ judul: "OmniScale Hub", subjudul: "Platform Pemantauan Server", status: "Live", deskripsi: "Sistem analitik terdistribusi dengan visualisasi real-time.", tags: ["Next.js", "Go API"], linkTautan: "#" }],
             artikelDefault: [{ judul: "Strategi Multi-Layer Caching", deskripsi: "Mengatasi cache invalidation dan konsistensi data.", tahun: "2026", linkTautan: "#artikel" }],
-            sosial: [{ nama: "GitHub", url: "https://github.com" }, { nama: "LinkedIn", url: "https://linkedin.com" }]
+            sosial: [
+                { nama: "GitHub", url: "https://github.com" }, 
+                { nama: "LinkedIn", url: "https://linkedin.com" },
+                { nama: "Instagram", url: "https://instagram.com" },
+                { nama: "X (Twitter)", url: "https://twitter.com" },
+                { nama: "Medium", url: "https://medium.com" },
+                { nama: "Dribbble", url: "https://dribbble.com" }
+            ]
         };
 
         let db = null;
         let cloudArticles = [];
         let cloudProjects = [];
 
-        // Konfigurasi Firebase yang Anda berikan
+        // Konfigurasi Firebase Asli Anda
         const firebaseConfig = {
             apiKey: "AIzaSyBEo067vVnWeqKrDzN56Xjm0dDIrzw9Img",
             authDomain: "portofolio-63f79.firebaseapp.com",
@@ -385,7 +387,15 @@
             document.getElementById('principlesContainer').innerHTML = DATA_PORTOFOLIO.prinsip.map(i => `<div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40"><h3 class="font-semibold">${i.judul}</h3><p class="text-zinc-500 mt-1">${i.deskripsi}</p></div>`).join('');
             document.getElementById('skillsContainer').innerHTML = DATA_PORTOFOLIO.keahlian.map(c => `<div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2"><div class="font-semibold flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full ${c.warnaDot}"></span>${c.kategori}</div><div class="text-zinc-500 space-y-1">${c.item.map(s => `<div>• ${s}</div>`).join('')}</div></div>`).join('');
             document.getElementById('experienceContainer').innerHTML = DATA_PORTOFOLIO.pengalaman.map(e => `<div class="space-y-2"><div class="flex justify-between gap-1"><div><h3 class="font-semibold text-sm">${e.posisi}</h3><p class="text-xs font-mono text-zinc-500">${e.perusahaan}</p></div><span class="text-xs font-mono text-zinc-400">${e.periode}</span></div><ul class="text-xs text-zinc-600 dark:text-zinc-400 list-disc list-inside">${e.poin.map(p => `<li>${p}</li>`).join('')}</ul></div>`).join('');
-            document.getElementById('socialLinksContainer').innerHTML = DATA_PORTOFOLIO.sosial.map((soc, idx) => `<a href="${soc.url}" target="_blank" class="hover:underline">${soc.nama}</a>${idx < DATA_PORTOFOLIO.sosial.length - 1 ? '<span>•</span>' : ''}`).join('');
+            
+            // Merender Sosial Media
+            document.getElementById('socialLinksContainer').innerHTML = DATA_PORTOFOLIO.sosial.map((soc, idx) => `
+                <div class="flex items-center gap-2">
+                    <a href="${soc.url}" target="_blank" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline transition-colors">${soc.nama}</a>
+                    ${idx < DATA_PORTOFOLIO.sosial.length - 1 ? '<span class="text-zinc-300 dark:text-zinc-700 mx-1">•</span>' : ''}
+                </div>
+            `).join('');
+            
             syncAllViews();
         });
 
@@ -427,18 +437,25 @@
             `).join('');
         }
 
-        // 5. SISTEM LOGIN AMAN DENGAN BASE64
+        // 5. SISTEM LOGIN (FOOLPROOF UNTUK SEMUA HP)
         document.getElementById('adminFormLogin').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = document.getElementById('loginSubmitBtn');
             btn.innerText = "Memeriksa..."; btn.disabled = true;
 
-            // .trim() membuang spasi gaib dari keyboard HP
-            const uInput = document.getElementById('adminUser').value.trim().toLowerCase();
-            const pInput = document.getElementById('adminPass').value.trim();
+            // Membuang semua spasi yang mungkin tidak sengaja terketik di HP
+            const rawUser = document.getElementById('adminUser').value;
+            const rawPass = document.getElementById('adminPass').value;
+            const cleanUser = rawUser.replace(/\s+/g, '').toLowerCase();
+            const cleanPass = rawPass.replace(/\s+/g, '');
             
-            // Enkripsi statis sederhana: admin -> YWRtaW4= | codeadmin -> Y29kZWFkbWlu
-            if (btoa(uInput) === "YWRtaW4=" && btoa(pInput) === "Y29kZWFkbWlu") {
+            // Menggunakan fungsi String.fromCharCode untuk sedikit menyembunyikan kata dari orang awam
+            // [97, 100, 109, 105, 110] = 'admin'
+            const vU = String.fromCharCode(97, 100, 109, 105, 110);
+            // [99, 111, 100, 101, 97, 100, 109, 105, 110] = 'codeadmin'
+            const vP = String.fromCharCode(99, 111, 100, 101, 97, 100, 109, 105, 110);
+
+            if (cleanUser === vU && cleanPass === vP) {
                 sessionStorage.setItem('azim_is_admin', 'true');
                 closeLoginModal(); 
                 showToast('✓ Akses Diberikan'); 
