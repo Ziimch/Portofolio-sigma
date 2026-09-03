@@ -316,27 +316,51 @@
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            fetchCloudData();
+            try {
+                // Cache data secara lokal supaya saat refresh, data lama langsung
+                // tampil dari cache sambil menunggu koneksi ke server tersambung.
+                db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+                    console.warn("Cache offline tidak aktif:", err.code);
+                });
+            } catch (e) { console.warn("Cache offline tidak didukung:", e); }
+            initCloudListeners();
         } catch (e) {
             console.warn("Sistem Cloud Offline.", e);
         }
 
-        async function fetchCloudData() {
-            if(!db) return;
-            try {
-                const artSnap = await db.collection('artikel').orderBy('createdAt', 'desc').get();
-                cloudArticles = artSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                const projSnap = await db.collection('proyek').orderBy('createdAt', 'desc').get();
-                cloudProjects = projSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                document.getElementById('firebaseStatusProj').classList.add('hidden');
+        function setCloudStatus(msg, show) {
+            const el = document.getElementById('firebaseStatusProj');
+            if (!el) return;
+            el.innerText = msg;
+            el.classList.toggle('hidden', !show);
+        }
+
+        function initCloudListeners() {
+            if (!db) return;
+            setCloudStatus('Menghubungkan ke Cloud...', true);
+
+            // onSnapshot = listener real-time: otomatis mencoba ulang koneksi
+            // di belakang layar jika jaringan sempat gagal/lambat saat refresh,
+            // dan langsung update tampilan begitu data tersedia (dari cache atau server).
+            db.collection('artikel').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                cloudArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 document.getElementById('dashCountArt').innerText = cloudArticles.length;
-                document.getElementById('dashCountProj').innerText = cloudProjects.length;
+                setCloudStatus('', false);
                 syncAllViews();
-            } catch (error) {
-                console.error("Akses ditolak:", error);
-            }
+            }, error => {
+                console.error("Gagal memuat artikel cloud:", error);
+                setCloudStatus('Gagal terhubung ke Cloud, mencoba lagi...', true);
+            });
+
+            db.collection('proyek').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                cloudProjects = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                document.getElementById('dashCountProj').innerText = cloudProjects.length;
+                setCloudStatus('', false);
+                syncAllViews();
+            }, error => {
+                console.error("Gagal memuat proyek cloud:", error);
+                setCloudStatus('Gagal terhubung ke Cloud, mencoba lagi...', true);
+            });
         }
 
         async function handleArticleUpload(e) {
@@ -348,7 +372,7 @@
                     linkTautan: document.getElementById('aLink').value, deskripsi: document.getElementById('aDesc').value,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                showToast('✓ Artikel sukses di-cloud!'); e.target.reset(); fetchCloudData(); 
+                showToast('✓ Artikel sukses di-cloud!'); e.target.reset();
             } catch(err) { showToast('Gagal: Periksa Rules Firestore Anda'); }
             btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
         }
@@ -365,14 +389,14 @@
                     deskripsi: document.getElementById('pDesc').value, tags: tagsArray,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                showToast('✓ Proyek sukses di-cloud!'); e.target.reset(); fetchCloudData(); 
+                showToast('✓ Proyek sukses di-cloud!'); e.target.reset();
             } catch(err) { showToast('Gagal: Periksa Rules Firestore Anda'); }
             btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
         }
 
         async function deleteCloudItem(collectionName, id) {
             if (confirm('Hapus data ini secara permanen dari Cloud?')) {
-                try { await db.collection(collectionName).doc(id).delete(); showToast('✓ Data dihapus.'); fetchCloudData(); } 
+                try { await db.collection(collectionName).doc(id).delete(); showToast('✓ Data dihapus.'); } 
                 catch(err) { showToast('Gagal hapus: ' + err.message); }
             }
         }
@@ -391,8 +415,49 @@
                 </div>
             `).join('');
             
+            renderProfileSections();
             syncAllViews();
         });
+
+        function renderProfileSections() {
+            document.getElementById('statsContainer').innerHTML = DATA_PORTOFOLIO.statistik.map(s => `
+                <div class="space-y-0.5">
+                    <div class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">${s.nilai}</div>
+                    <div class="text-[11px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400">${s.label}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('principlesContainer').innerHTML = DATA_PORTOFOLIO.prinsip.map(p => `
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-1.5">
+                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">${p.judul}</h3>
+                    <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">${p.deskripsi}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('skillsContainer').innerHTML = DATA_PORTOFOLIO.keahlian.map(k => `
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full ${k.warnaDot}"></span>
+                        <span class="font-semibold text-zinc-900 dark:text-zinc-100">${k.kategori}</span>
+                    </div>
+                    <ul class="space-y-1.5 text-zinc-500 dark:text-zinc-400">
+                        ${k.item.map(i => `<li>${i}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+
+            document.getElementById('experienceContainer').innerHTML = DATA_PORTOFOLIO.pengalaman.map(e => `
+                <div class="space-y-2">
+                    <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                        <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${e.posisi} · <span class="font-normal text-zinc-500 dark:text-zinc-400">${e.perusahaan}</span></h3>
+                        <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${e.periode}</span>
+                    </div>
+                    <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">
+                        ${e.poin.map(pt => `<li>${pt}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
 
         function syncAllViews() {
             const allArticles = [...cloudArticles, ...DATA_PORTOFOLIO.artikelDefault];
@@ -466,7 +531,22 @@
         document.getElementById('themeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
         const mobileMenuBtn = document.getElementById('mobileMenuBtn'); const mobileMenu = document.getElementById('mobileMenu');
         mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden')); document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => mobileMenu.classList.add('hidden')); });
-        function salinEmailAzim() { const dummy = document.createElement('textarea'); dummy.value = DATA_PORTOFOLIO.profil.email; document.body.appendChild(dummy); dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToast(`✓ Email disalin!`); }
+        function salinEmailAzim() {
+            const email = DATA_PORTOFOLIO.profil.email;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(email).then(() => showToast('✓ Email disalin!')).catch(() => fallbackCopy(email));
+            } else {
+                fallbackCopy(email);
+            }
+        }
+        function fallbackCopy(text) {
+            const dummy = document.createElement('textarea');
+            dummy.value = text; dummy.style.position = 'fixed'; dummy.style.opacity = '0';
+            document.body.appendChild(dummy); dummy.focus(); dummy.select();
+            try { document.execCommand('copy'); showToast('✓ Email disalin!'); }
+            catch (err) { showToast('Gagal menyalin email'); }
+            document.body.removeChild(dummy);
+        }
         function showToast(msg) { const toast = document.getElementById('toast'); document.getElementById('toastText').innerText = msg; toast.classList.remove('translate-y-20', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-20', 'opacity-0'); }, 2500); }
         function handleFormSubmit(e) { e.preventDefault(); const btn = document.getElementById('submitBtn'); btn.innerText = 'Mengirimkan...'; btn.disabled = true; setTimeout(() => { document.getElementById('formSuccess').classList.remove('hidden'); btn.innerText = 'Kirimkan Pesan'; btn.disabled = false; e.target.reset(); }, 600); }
     </script>
