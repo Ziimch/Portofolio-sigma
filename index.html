@@ -67,6 +67,7 @@
                 <a href="#keahlian" data-section="keahlian" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Keahlian</a>
                 <a href="#pengalaman" data-section="pengalaman" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Pengalaman</a>
                 <a href="#/proyek" data-section="proyek" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Proyek</a>
+                <a href="#/github" data-section="github" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">GitHub</a>
                 <a href="#artikel" data-section="artikel" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Artikel</a>
                 <a href="#testimoni" data-section="testimoni" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Testimoni</a>
                 <a href="#kontak" data-section="kontak" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Kontak</a>
@@ -89,9 +90,10 @@
             <a href="#keahlian" class="mobile-link block text-zinc-600 dark:text-zinc-400">02. Keahlian</a>
             <a href="#pengalaman" class="mobile-link block text-zinc-600 dark:text-zinc-400">03. Pengalaman</a>
             <a href="#/proyek" class="mobile-link block text-zinc-600 dark:text-zinc-400">04. Proyek</a>
-            <a href="#artikel" class="mobile-link block text-zinc-600 dark:text-zinc-400">05. Artikel</a>
-            <a href="#testimoni" class="mobile-link block text-zinc-600 dark:text-zinc-400">06. Testimoni</a>
-            <a href="#kontak" class="mobile-link block text-zinc-600 dark:text-zinc-400">07. Kontak</a>
+            <a href="#/github" class="mobile-link block text-zinc-600 dark:text-zinc-400">05. GitHub</a>
+            <a href="#artikel" class="mobile-link block text-zinc-600 dark:text-zinc-400">06. Artikel</a>
+            <a href="#testimoni" class="mobile-link block text-zinc-600 dark:text-zinc-400">07. Testimoni</a>
+            <a href="#kontak" class="mobile-link block text-zinc-600 dark:text-zinc-400">08. Kontak</a>
         </div>
     </header>
 
@@ -226,6 +228,41 @@
         <div id="detailContent"></div>
     </div>
 
+    <!-- ======================= SUB-HALAMAN: REPOSITORI GITHUB ======================= -->
+    <div id="pageGithub" class="hidden max-w-4xl mx-auto px-6 py-12 sm:py-16 space-y-6">
+        <div class="text-xs font-mono text-zinc-400">
+            <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline">Beranda</a> / <span class="text-zinc-600 dark:text-zinc-300">GitHub</span>
+        </div>
+        <div class="flex items-start justify-between gap-4 flex-wrap">
+            <div class="space-y-2">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Repositori GitHub</h1>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Diambil langsung dari <span id="ghUsernameLabel" class="font-mono">GitHub</span> secara real-time.</p>
+            </div>
+            <a id="ghProfileLink" href="#" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-xs font-mono font-semibold hover:opacity-90 whitespace-nowrap">Lihat Profil ↗</a>
+        </div>
+
+        <div id="ghStatsBar" class="grid grid-cols-3 gap-4 pt-2"></div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <input id="ghSearch" type="text" placeholder="Cari repositori..." class="w-full sm:w-64 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs focus:outline-none">
+            <select id="ghSortSelect" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono focus:outline-none">
+                <option value="updated">Terbaru diperbarui</option>
+                <option value="stars">Paling banyak bintang</option>
+                <option value="name">Nama (A-Z)</option>
+            </select>
+        </div>
+        <div id="ghLangFilters" class="flex flex-wrap gap-2 text-[11px] font-mono"></div>
+
+        <div id="ghLoadingState" class="space-y-3">
+            <div class="animate-pulse h-24 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900"></div>
+            <div class="animate-pulse h-24 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900"></div>
+            <div class="animate-pulse h-24 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900"></div>
+        </div>
+        <div id="ghErrorState" class="hidden text-xs font-mono text-rose-500 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10"></div>
+        <div id="ghReposContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        <p id="ghEmptyState" class="hidden text-xs font-mono text-zinc-400 py-4">Tidak ada repositori yang cocok.</p>
+    </div>
+
     <button id="backToTop" aria-label="Kembali ke atas" class="hidden fixed bottom-6 left-6 w-10 h-10 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg items-center justify-center z-[55] hover:opacity-90">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
     </button>
@@ -281,8 +318,9 @@
                     <div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800"><div class="text-xs font-mono text-zinc-500 mb-2">Pesan Masuk</div><div class="text-3xl font-bold text-amber-500">via email</div></div>
                 </div>
                 <div class="bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 rounded-xl p-4 text-xs leading-relaxed space-y-1">
-                    <p>✅ Login admin kini memakai <strong>Firebase Authentication</strong> (email/password) yang sesungguhnya, bukan lagi kredensial statis di kode. Pastikan rule Firestore Anda mensyaratkan <code>request.auth != null</code> agar tulis/hapus data benar-benar terlindungi di server, bukan hanya di tampilan.</p>
-                    <p>✅ Semua teks dari artikel/proyek kini di-escape sebelum ditampilkan (anti-XSS), dan tautan yang bukan http/https/mailto otomatis diblokir.</p>
+                    <p>✅ Login admin memakai <strong>Firebase Authentication</strong> (email/password) asli — pastikan rule Firestore mensyaratkan <code>request.auth != null</code> agar tulis/hapus benar-benar terlindungi di server.</p>
+                    <p>✅ Semua teks artikel/proyek di-escape sebelum ditampilkan (anti-XSS), tautan non-http/https/mailto otomatis diblokir.</p>
+                    <p>✅ Operasi simpan/hapus kini punya <strong>batas waktu 15 detik</strong> — tidak akan stuck menggantung lagi kalau koneksi lambat, dan pesan errornya sekarang menyebutkan sebab spesifik (izin ditolak, timeout, atau offline).</p>
                 </div>
             </div>
 
@@ -364,7 +402,7 @@
                 { nama: "Bagus Prasetyo", peran: "CTO, Solusi Mandiri", pesan: "Komunikasinya jelas, estimasinya akurat, dan kualitas kodenya konsisten tinggi dari awal sampai akhir proyek." }
             ],
             sosial: [
-                { nama: "GitHub", url: "https://github.com" }, { nama: "LinkedIn", url: "https://linkedin.com" },
+                { nama: "GitHub", url: "https://github.com/ziimch" }, { nama: "LinkedIn", url: "https://linkedin.com" },
                 { nama: "Instagram", url: "https://instagram.com" }, { nama: "X (Twitter)", url: "https://twitter.com" },
                 { nama: "Medium", url: "https://medium.com" }, { nama: "Dribbble", url: "https://dribbble.com" }
             ]
@@ -376,6 +414,13 @@
         let activeTagFilter = 'Semua';
         let activeSearch = '';
         let lastContactSubmit = 0;
+        let articlesLoaded = false;
+        let projectsLoaded = false;
+        let ghReposCache = null;
+        let ghReposLoadedAt = 0;
+        let activeGhLanguage = 'Semua';
+        let activeGhSearch = '';
+        let activeGhSort = 'updated';
 
         // ---------- Keamanan: escaping & validasi tautan ----------
         function escapeHtml(str) {
@@ -426,34 +471,61 @@
             el.classList.toggle('hidden', !show);
         }
 
+        // ---------- Bantuan: bungkus operasi Firestore dengan batas waktu ----------
+        // Ini memperbaiki bug "tombol stuck menyimpan": kalau koneksi lambat/mati,
+        // operasi tidak akan menggantung selamanya — akan gagal dengan pesan jelas
+        // setelah 15 detik, dan tombol otomatis kembali normal.
+        function withTimeout(promise, ms, timeoutMessage) {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => reject(new Error(timeoutMessage || 'Waktu tunggu habis (koneksi lambat/terputus).')), ms);
+                promise.then(
+                    (val) => { clearTimeout(timer); resolve(val); },
+                    (err) => { clearTimeout(timer); reject(err); }
+                );
+            });
+        }
+
+        function firestoreErrorMessage(err) {
+            if (!err) return 'Terjadi kesalahan tidak diketahui.';
+            if (!navigator.onLine) return 'Anda sedang offline. Periksa koneksi internet lalu coba lagi.';
+            const code = err.code || '';
+            if (code === 'permission-denied') return 'Ditolak oleh Firestore Rules. Pastikan email admin di rules sudah sesuai & Anda sudah login.';
+            if (code === 'unavailable') return 'Server Firestore tidak dapat dijangkau. Coba lagi sebentar.';
+            if (code === 'deadline-exceeded' || err.message?.includes('Waktu tunggu')) return err.message || 'Waktu tunggu habis. Coba lagi.';
+            return err.message || ('Gagal: ' + code);
+        }
+
         function initCloudListeners() {
-            if (!db) return;
+            if (!db) { setCloudStatus('Firebase gagal diinisialisasi. Muat ulang halaman.', true); return; }
             setCloudStatus('Menghubungkan ke Cloud...', true);
 
             db.collection('artikel').orderBy('createdAt', 'desc').onSnapshot(snap => {
                 cloudArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                articlesLoaded = true;
                 document.getElementById('dashCountArt').innerText = cloudArticles.length;
                 setCloudStatus('', false);
                 syncAllViews();
             }, error => {
                 console.error("Gagal memuat artikel cloud:", error);
-                setCloudStatus('Gagal terhubung ke Cloud, mencoba lagi...', true);
+                setCloudStatus('Gagal terhubung ke Cloud (' + (error.code || 'error') + '), mencoba lagi...', true);
             });
 
             db.collection('proyek').orderBy('createdAt', 'desc').onSnapshot(snap => {
                 cloudProjects = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                projectsLoaded = true;
                 document.getElementById('dashCountProj').innerText = cloudProjects.length;
                 setCloudStatus('', false);
                 syncAllViews();
             }, error => {
                 console.error("Gagal memuat proyek cloud:", error);
-                setCloudStatus('Gagal terhubung ke Cloud, mencoba lagi...', true);
+                setCloudStatus('Gagal terhubung ke Cloud (' + (error.code || 'error') + '), mencoba lagi...', true);
             });
         }
 
         async function handleArticleUpload(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSubmitArt'); btn.innerText = "Menyimpan..."; btn.disabled = true;
+            const btn = document.getElementById('btnSubmitArt');
+            btn.innerText = "Menyimpan..."; btn.disabled = true;
             const editId = document.getElementById('aEditId').value;
             const payload = {
                 judul: document.getElementById('aTitle').value.trim().slice(0, 120),
@@ -462,19 +534,26 @@
                 deskripsi: document.getElementById('aDesc').value.trim().slice(0, 500)
             };
             try {
+                if (!db) throw new Error('Firebase belum terhubung. Muat ulang halaman.');
+                if (!payload.judul || !payload.deskripsi) throw new Error('Judul dan deskripsi wajib diisi.');
                 if (editId) {
-                    await db.collection('artikel').doc(editId).update(payload);
+                    payload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await withTimeout(db.collection('artikel').doc(editId).update(payload), 15000);
                     showToast('✓ Artikel diperbarui!'); cancelArticleEdit();
                 } else {
                     payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('artikel').add(payload);
+                    await withTimeout(db.collection('artikel').add(payload), 15000);
                     showToast('✓ Artikel sukses di-cloud!');
                 }
                 e.target.reset();
                 document.getElementById('aYear').value = '2026';
                 document.getElementById('aLink').value = '#artikel';
-            } catch(err) { showToast('Gagal: Periksa Rules Firestore Anda'); }
-            btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
+            } catch(err) {
+                console.error('Gagal simpan artikel:', err);
+                showToast('✗ ' + firestoreErrorMessage(err));
+            } finally {
+                btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
+            }
         }
 
         function editArticle(id) {
@@ -502,7 +581,8 @@
 
         async function handleProjectUpload(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSubmitProj'); btn.innerText = "Menyimpan..."; btn.disabled = true;
+            const btn = document.getElementById('btnSubmitProj');
+            btn.innerText = "Menyimpan..."; btn.disabled = true;
             const editId = document.getElementById('pEditId').value;
             const tagsArray = document.getElementById('pTags').value.split(',').map(t => t.trim()).filter(t => t !== "").slice(0, 12);
             const payload = {
@@ -514,18 +594,25 @@
                 tags: tagsArray
             };
             try {
+                if (!db) throw new Error('Firebase belum terhubung. Muat ulang halaman.');
+                if (!payload.judul || !payload.deskripsi) throw new Error('Judul dan deskripsi wajib diisi.');
                 if (editId) {
-                    await db.collection('proyek').doc(editId).update(payload);
+                    payload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await withTimeout(db.collection('proyek').doc(editId).update(payload), 15000);
                     showToast('✓ Proyek diperbarui!'); cancelProjectEdit();
                 } else {
                     payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('proyek').add(payload);
+                    await withTimeout(db.collection('proyek').add(payload), 15000);
                     showToast('✓ Proyek sukses di-cloud!');
                 }
                 e.target.reset();
                 document.getElementById('pLink').value = 'https://github.com';
-            } catch(err) { showToast('Gagal: Periksa Rules Firestore Anda'); }
-            btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
+            } catch(err) {
+                console.error('Gagal simpan proyek:', err);
+                showToast('✗ ' + firestoreErrorMessage(err));
+            } finally {
+                btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
+            }
         }
 
         function editProject(id) {
@@ -553,9 +640,14 @@
         }
 
         async function deleteCloudItem(collectionName, id) {
-            if (confirm('Hapus data ini secara permanen dari Cloud?')) {
-                try { await db.collection(collectionName).doc(id).delete(); showToast('✓ Data dihapus.'); }
-                catch(err) { showToast('Gagal hapus: ' + err.message); }
+            if (!confirm('Hapus data ini secara permanen dari Cloud?')) return;
+            try {
+                if (!db) throw new Error('Firebase belum terhubung. Muat ulang halaman.');
+                await withTimeout(db.collection(collectionName).doc(id).delete(), 15000);
+                showToast('✓ Data dihapus.');
+            } catch(err) {
+                console.error('Gagal hapus:', err);
+                showToast('✗ ' + firestoreErrorMessage(err));
             }
         }
 
@@ -724,11 +816,45 @@
             syncAllViews();
         });
 
+        document.getElementById('ghSearch') && document.getElementById('ghSearch').addEventListener('input', (e) => {
+            activeGhSearch = e.target.value;
+            renderGithubRepos();
+        });
+        document.getElementById('ghSortSelect') && document.getElementById('ghSortSelect').addEventListener('change', (e) => {
+            activeGhSort = e.target.value;
+            renderGithubRepos();
+        });
+
+        // Pintasan keyboard "/" untuk fokus ke kotak pencarian yang sedang terlihat.
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== '/' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            const visibleSearch = ['projectSearch', 'ghSearch'].map(id => document.getElementById(id)).find(el => el && el.offsetParent !== null);
+            if (visibleSearch) { e.preventDefault(); visibleSearch.focus(); }
+        });
+
+        // Banner status koneksi: kasih tahu admin secara eksplisit kalau sedang offline,
+        // supaya "kenapa tidak tersimpan" jadi jelas alasannya, bukan cuma stuck diam.
+        window.addEventListener('offline', () => showToast('⚠️ Anda sedang offline. Perubahan tidak akan tersimpan ke Cloud.'));
+        window.addEventListener('online', () => showToast('✓ Koneksi kembali online.'));
+
         // ---------- Router sub-halaman (#/proyek dan #/proyek/:slug) ----------
         function renderProjectDetail(slug) {
             const proj = getMergedProjects().find(p => p._slug === slug);
             const wrap = document.getElementById('detailContent');
             const crumbTitle = document.getElementById('detailBreadcrumbTitle');
+
+            // Perbaikan bug: jangan tampilkan "tidak ditemukan" kalau data cloud
+            // memang belum selesai dimuat (mis. dibuka langsung lewat link share).
+            if (!proj && !projectsLoaded) {
+                crumbTitle.innerText = 'Memuat...';
+                wrap.innerHTML = `
+                    <div class="py-16 text-center space-y-3 animate-pulse">
+                        <div class="h-6 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded mx-auto"></div>
+                        <div class="h-4 w-1/2 bg-zinc-200 dark:bg-zinc-800 rounded mx-auto"></div>
+                        <p class="text-xs font-mono text-zinc-400 pt-2">Memuat data proyek dari cloud...</p>
+                    </div>`;
+                return;
+            }
             if (!proj) {
                 crumbTitle.innerText = 'Tidak ditemukan';
                 wrap.innerHTML = `
@@ -782,27 +908,167 @@
             const footerEl = document.getElementById('mainFooter');
             const listEl = document.getElementById('pageProyekList');
             const detailEl = document.getElementById('pageProyekDetail');
+            const ghEl = document.getElementById('pageGithub');
+            const allSubpages = [listEl, detailEl, ghEl];
 
             if (hash.startsWith('#/proyek/')) {
                 const slug = decodeURIComponent(hash.replace('#/proyek/', ''));
                 homeEl.classList.add('hidden'); footerEl.classList.add('hidden');
-                listEl.classList.add('hidden'); detailEl.classList.remove('hidden');
+                allSubpages.forEach(p => p.classList.add('hidden'));
+                detailEl.classList.remove('hidden');
                 renderProjectDetail(slug);
                 window.scrollTo({ top: 0 });
             } else if (hash === '#/proyek') {
                 homeEl.classList.add('hidden'); footerEl.classList.add('hidden');
-                detailEl.classList.add('hidden'); listEl.classList.remove('hidden');
+                allSubpages.forEach(p => p.classList.add('hidden'));
+                listEl.classList.remove('hidden');
                 syncAllViews();
                 window.scrollTo({ top: 0 });
+            } else if (hash === '#/github') {
+                homeEl.classList.add('hidden'); footerEl.classList.add('hidden');
+                allSubpages.forEach(p => p.classList.add('hidden'));
+                ghEl.classList.remove('hidden');
+                loadGithubRepos();
+                window.scrollTo({ top: 0 });
             } else {
-                listEl.classList.add('hidden'); detailEl.classList.add('hidden');
+                allSubpages.forEach(p => p.classList.add('hidden'));
                 homeEl.classList.remove('hidden'); footerEl.classList.remove('hidden');
                 if (hash && hash.length > 1 && !hash.startsWith('#/')) {
                     const target = document.querySelector(hash);
                     if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
                 }
             }
+
+            // Perbaikan bug: highlight menu nav juga harus aktif saat berada di sub-halaman,
+            // bukan cuma saat scroll di beranda.
+            const activeKey = hash.startsWith('#/proyek') ? 'proyek' : hash === '#/github' ? 'github' : null;
+            if (activeKey) {
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.section === activeKey));
+            }
         }
+
+        // ---------- Sub-halaman GitHub: ambil repositori publik lewat GitHub REST API ----------
+        const GITHUB_USERNAME = 'ziimch';
+        const GH_CACHE_KEY = 'azim_gh_repos_cache_v1';
+        const GH_CACHE_TTL_MS = 10 * 60 * 1000; // 10 menit, biar hemat rate-limit API GitHub (60 req/jam tanpa token)
+
+        function formatRelativeDate(dateStr) {
+            const diffMs = Date.now() - new Date(dateStr).getTime();
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            if (days <= 0) return 'hari ini';
+            if (days === 1) return 'kemarin';
+            if (days < 30) return days + ' hari lalu';
+            if (days < 365) return Math.floor(days / 30) + ' bulan lalu';
+            return Math.floor(days / 365) + ' tahun lalu';
+        }
+
+        async function loadGithubRepos() {
+            document.getElementById('ghUsernameLabel').innerText = '@' + GITHUB_USERNAME;
+            document.getElementById('ghProfileLink').href = 'https://github.com/' + GITHUB_USERNAME;
+
+            // Pakai cache localStorage dulu supaya tampil instan & hemat kuota API GitHub.
+            try {
+                const cached = localStorage.getItem(GH_CACHE_KEY);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed.username === GITHUB_USERNAME && (Date.now() - parsed.savedAt) < GH_CACHE_TTL_MS) {
+                        ghReposCache = parsed.repos;
+                        renderGithubRepos();
+                        return;
+                    }
+                }
+            } catch (e) { /* cache korup, abaikan */ }
+
+            if (ghReposCache) { renderGithubRepos(); return; } // sudah pernah dimuat di sesi ini
+
+            document.getElementById('ghLoadingState').classList.remove('hidden');
+            document.getElementById('ghErrorState').classList.add('hidden');
+            document.getElementById('ghReposContainer').innerHTML = '';
+
+            try {
+                const res = await withTimeout(
+                    fetch(`https://api.github.com/users/${encodeURIComponent(GITHUB_USERNAME)}/repos?sort=updated&per_page=100`, {
+                        headers: { 'Accept': 'application/vnd.github+json' }
+                    }),
+                    15000, 'Waktu tunggu GitHub API habis.'
+                );
+                if (res.status === 404) throw new Error(`Akun GitHub "${GITHUB_USERNAME}" tidak ditemukan.`);
+                if (res.status === 403) throw new Error('Batas permintaan GitHub API tercapai. Coba lagi dalam beberapa menit.');
+                if (!res.ok) throw new Error('GitHub API merespon status ' + res.status);
+                const data = await res.json();
+                ghReposCache = data.filter(r => !r.fork).map(r => ({
+                    name: r.name, description: r.description, url: r.html_url,
+                    language: r.language, stars: r.stargazers_count, forks: r.forks_count,
+                    updatedAt: r.pushed_at, topics: r.topics || [], homepage: r.homepage
+                }));
+                try {
+                    localStorage.setItem(GH_CACHE_KEY, JSON.stringify({ username: GITHUB_USERNAME, savedAt: Date.now(), repos: ghReposCache }));
+                } catch (e) { /* localStorage penuh/diblokir, tidak fatal */ }
+                renderGithubRepos();
+            } catch (err) {
+                console.error('Gagal memuat repo GitHub:', err);
+                document.getElementById('ghLoadingState').classList.add('hidden');
+                const errEl = document.getElementById('ghErrorState');
+                errEl.innerText = '✗ ' + (err.message || 'Gagal memuat repositori GitHub.') + ` Anda tetap bisa lihat langsung di github.com/${GITHUB_USERNAME}`;
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        function renderGithubRepos() {
+            document.getElementById('ghLoadingState').classList.add('hidden');
+            document.getElementById('ghErrorState').classList.add('hidden');
+            const repos = ghReposCache || [];
+
+            const totalStars = repos.reduce((sum, r) => sum + (r.stars || 0), 0);
+            const langCount = {};
+            repos.forEach(r => { if (r.language) langCount[r.language] = (langCount[r.language] || 0) + 1; });
+            const topLang = Object.keys(langCount).sort((a, b) => langCount[b] - langCount[a])[0] || '—';
+
+            document.getElementById('ghStatsBar').innerHTML = `
+                <div class="p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 text-center">
+                    <div class="text-xl font-bold">${repos.length}</div><div class="text-[10px] font-mono text-zinc-500">Repositori</div>
+                </div>
+                <div class="p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 text-center">
+                    <div class="text-xl font-bold">★ ${totalStars}</div><div class="text-[10px] font-mono text-zinc-500">Total Bintang</div>
+                </div>
+                <div class="p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 text-center">
+                    <div class="text-xl font-bold">${escapeHtml(topLang)}</div><div class="text-[10px] font-mono text-zinc-500">Bahasa Utama</div>
+                </div>`;
+
+            const languages = ['Semua', ...Array.from(new Set(repos.map(r => r.language).filter(Boolean)))];
+            document.getElementById('ghLangFilters').innerHTML = languages.map(lang => `
+                <button class="filter-chip ${lang === activeGhLanguage ? 'active' : ''} px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800" onclick="setGhLanguageFilter('${String(lang).replace(/'/g, "\\'")}')">${escapeHtml(lang)}</button>
+            `).join('');
+
+            let filtered = repos;
+            if (activeGhLanguage !== 'Semua') filtered = filtered.filter(r => r.language === activeGhLanguage);
+            if (activeGhSearch.trim() !== '') {
+                const q = activeGhSearch.trim().toLowerCase();
+                filtered = filtered.filter(r => (r.name || '').toLowerCase().includes(q) || (r.description || '').toLowerCase().includes(q));
+            }
+            filtered = filtered.slice().sort((a, b) => {
+                if (activeGhSort === 'stars') return (b.stars || 0) - (a.stars || 0);
+                if (activeGhSort === 'name') return a.name.localeCompare(b.name);
+                return new Date(b.updatedAt) - new Date(a.updatedAt);
+            });
+
+            document.getElementById('ghEmptyState').classList.toggle('hidden', filtered.length !== 0);
+            document.getElementById('ghReposContainer').innerHTML = filtered.map(r => `
+                <a href="${escapeHtml(safeUrl(r.url))}" target="_blank" rel="noopener noreferrer" class="block p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 hover:border-sky-500/50 transition-colors space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-semibold text-sm flex items-center gap-1.5">📦 ${escapeHtml(r.name)}</h3>
+                        ${r.stars > 0 ? `<span class="text-xs font-mono text-amber-500 whitespace-nowrap">★ ${r.stars}</span>` : ''}
+                    </div>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">${escapeHtml(r.description || 'Tidak ada deskripsi.')}</p>
+                    <div class="flex items-center justify-between gap-2 pt-1 text-[11px] font-mono text-zinc-400">
+                        <span>${r.language ? escapeHtml(r.language) : '—'}${r.forks ? ' · ⑂ ' + r.forks : ''}</span>
+                        <span>Diperbarui ${formatRelativeDate(r.updatedAt)}</span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function setGhLanguageFilter(lang) { activeGhLanguage = lang; renderGithubRepos(); }
 
         // ---------- Login admin via Firebase Authentication (bukan lagi kredensial statis) ----------
         // Batas percobaan login untuk memperlambat brute-force sederhana di sisi klien.
@@ -872,7 +1138,17 @@
             document.getElementById('btn' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).className = "admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono text-xs font-semibold transition-colors";
         }
 
-        document.getElementById('themeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+        // Simpan preferensi tema supaya tidak reset ke dark tiap reload (bug lama).
+        try {
+            const savedTheme = localStorage.getItem('azim_theme');
+            if (savedTheme === 'light') document.documentElement.classList.remove('dark');
+            else if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+        } catch (e) { /* localStorage diblokir, abaikan */ }
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('azim_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {}
+        });
         const mobileMenuBtn = document.getElementById('mobileMenuBtn'); const mobileMenu = document.getElementById('mobileMenu');
         mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
         document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => mobileMenu.classList.add('hidden')); });
