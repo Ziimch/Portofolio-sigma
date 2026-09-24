@@ -1,7 +1,7 @@
 <h1 align="center">Hi there 👋</h1>
 ​<h3 align="center">Seorang Web Developer yang bersemangat.</h3>
 ​<p align="center">
-<img src="https://komarev.com/ghpvc/?username=ziimch&label=Profile%20views&color=0e75b6&style=flat" alt="Profile Views" />
+<img src="https://komarev.com/ghpvc/?username=Ziimch&label=Profile%20views&color=0e75b6&style=flat" alt="Profile Views" />
   
 </p>
 ​👨‍💻 Tentang Saya
@@ -34,13 +34,13 @@
 </p>
 ​📊 Statistik GitHub
 ​<div align="center">
-<img src="https://github-readme-stats.vercel.app/api?username=ziimch&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117" alt="Statistik GitHub Saya" width="48%" />
-​<img src="https://github-readme-streak-stats.herokuapp.com/?user=ziimch&theme=radical&hide_border=true&background=0D1117" alt="GitHub Streak" width="48%" />
+<img src="https://github-readme-stats.vercel.app/api?username=Ziimch&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117" alt="Statistik GitHub Saya" width="48%" />
+​<img src="https://github-readme-streak-stats.herokuapp.com/?user=Ziimch&theme=radical&hide_border=true&background=0D1117" alt="GitHub Streak" width="48%" />
 </div>
 
 
 <div align="center">
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ziimch&layout=compact&theme=radical&hide_border=true&bg_color=0D1117" alt="Bahasa Teratas" width="48%" />
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Ziimch&layout=compact&theme=radical&hide_border=true&bg_color=0D1117" alt="Bahasa Teratas" width="48%" />
 </div>
 ​🌐 Mari Terhubung!
 ​<p align="center">
