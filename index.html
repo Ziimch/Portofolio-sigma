@@ -2,23 +2,31 @@
 <html lang="id" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title id="pageTitle">Azim — Software Engineer & Solution Architect</title>
-    
+    <meta name="description" content="Azim — Software Engineer & Solution Architect. Merancang dan membangun arsitektur web berperforma tinggi, skalabel, dan mudah dirawat.">
+    <meta property="og:title" content="Azim — Software Engineer & Solution Architect">
+    <meta property="og:description" content="Portofolio profesional: pengalaman, proyek, dan artikel seputar rekayasa perangkat lunak.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#09090b">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧑‍💻</text></svg>">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] } } } }
     </script>
-    
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <style>
         ::-webkit-scrollbar { width: 6px; }
@@ -26,40 +34,52 @@
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
         .light ::-webkit-scrollbar-thumb { background: #d4d4d8; }
         * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+        }
+
+        a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+            outline: 2px solid #0ea5e9; outline-offset: 2px; border-radius: 4px;
+        }
+
+        #scrollProgress { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: linear-gradient(90deg,#0ea5e9,#10b981); z-index: 60; transition: width 0.1s linear; }
+        .nav-link.active { color: #0ea5e9 !important; }
+        .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
+        .filter-chip.active { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+        .honeypot-field { position: absolute; left: -9999px; top: -9999px; opacity: 0; height: 0; width: 0; pointer-events: none; }
     </style>
 </head>
 <body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-zinc-200 dark:selection:bg-zinc-800">
+
+    <div id="scrollProgress"></div>
 
     <!-- HEADER -->
     <header class="sticky top-0 z-40 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
         <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
             <a href="#hero" class="flex items-center gap-2.5 group">
-                <img 
-                    id="navLogo" 
-                    src="1000003180.jpg" 
-                    alt="Logo" 
-                    class="w-8 h-8 rounded-lg object-cover border border-zinc-200 dark:border-zinc-800 shadow-sm group-hover:scale-105 transition-transform"
-                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop';"
-                >
+                <img id="navLogo" src="1000003180.jpg" alt="Logo" class="w-8 h-8 rounded-lg object-cover border border-zinc-200 dark:border-zinc-800 shadow-sm group-hover:scale-105 transition-transform" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop';">
                 <span id="navName" class="font-bold text-sm tracking-tight">Azim</span>
             </a>
             <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                <a href="#tentang" class="hover:text-zinc-900 dark:hover:text-zinc-100">Tentang</a>
-                <a href="#keahlian" class="hover:text-zinc-900 dark:hover:text-zinc-100">Keahlian</a>
-                <a href="#pengalaman" class="hover:text-zinc-900 dark:hover:text-zinc-100">Pengalaman</a>
-                <a href="#proyek" class="hover:text-zinc-900 dark:hover:text-zinc-100">Proyek</a>
-                <a href="#artikel" class="hover:text-zinc-900 dark:hover:text-zinc-100">Artikel</a>
-                <a href="#kontak" class="hover:text-zinc-900 dark:hover:text-zinc-100">Kontak</a>
+                <a href="#tentang" data-section="tentang" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Tentang</a>
+                <a href="#keahlian" data-section="keahlian" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Keahlian</a>
+                <a href="#pengalaman" data-section="pengalaman" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Pengalaman</a>
+                <a href="#/proyek" data-section="proyek" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Proyek</a>
+                <a href="#artikel" data-section="artikel" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Artikel</a>
+                <a href="#testimoni" data-section="testimoni" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Testimoni</a>
+                <a href="#kontak" data-section="kontak" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Kontak</a>
             </nav>
             <div class="flex items-center gap-2">
-                <button onclick="handleLockIconClick()" title="Akses Sistem" class="p-2 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                <button onclick="handleLockIconClick()" title="Akses Sistem" aria-label="Akses admin" class="p-2 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                 </button>
-                <button id="themeToggle" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                <button id="themeToggle" aria-label="Ganti tema terang/gelap" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <svg id="moonIcon" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg id="sunIcon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
-                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500">
+                <button id="mobileMenuBtn" aria-label="Buka menu" class="md:hidden p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
@@ -68,28 +88,22 @@
             <a href="#tentang" class="mobile-link block text-zinc-600 dark:text-zinc-400">01. Tentang</a>
             <a href="#keahlian" class="mobile-link block text-zinc-600 dark:text-zinc-400">02. Keahlian</a>
             <a href="#pengalaman" class="mobile-link block text-zinc-600 dark:text-zinc-400">03. Pengalaman</a>
-            <a href="#proyek" class="mobile-link block text-zinc-600 dark:text-zinc-400">04. Proyek</a>
+            <a href="#/proyek" class="mobile-link block text-zinc-600 dark:text-zinc-400">04. Proyek</a>
             <a href="#artikel" class="mobile-link block text-zinc-600 dark:text-zinc-400">05. Artikel</a>
-            <a href="#kontak" class="mobile-link block text-zinc-600 dark:text-zinc-400">06. Kontak</a>
+            <a href="#testimoni" class="mobile-link block text-zinc-600 dark:text-zinc-400">06. Testimoni</a>
+            <a href="#kontak" class="mobile-link block text-zinc-600 dark:text-zinc-400">07. Kontak</a>
         </div>
     </header>
 
-    <!-- KONTEN PUBLIK -->
-    <main class="max-w-4xl mx-auto px-6 py-12 sm:py-20 space-y-20">
-        <!-- HERO -->
+    <!-- ======================= HALAMAN BERANDA ======================= -->
+    <main id="mainHome" class="max-w-4xl mx-auto px-6 py-12 sm:py-20 space-y-20">
         <section id="hero" class="space-y-6">
             <div id="heroBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono border border-emerald-500/20">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="heroBadgeText">Tersedia untuk Pekerjaan Full-Time & Konsultasi</span>
             </div>
             <div class="flex items-center gap-4 sm:gap-5">
-                <img 
-                    id="heroAvatar" 
-                    src="1000003180.jpg" 
-                    alt="Foto Profil" 
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0"
-                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop';"
-                >
+                <img id="heroAvatar" src="1000003180.jpg" alt="Foto Profil" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop';">
                 <div class="space-y-1">
                     <h1 id="heroName" class="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Azim</h1>
                     <p id="heroRole" class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400"></p>
@@ -105,41 +119,44 @@
             <div id="statsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800"></div>
         </section>
 
-        <!-- TENTANG -->
-        <section id="tentang" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+        <section id="tentang" class="reveal space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
             <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">01.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Tentang & Prinsip</h2></div>
             <p id="aboutDetail" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed"></p>
             <div id="principlesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs"></div>
         </section>
 
-        <!-- KEAHLIAN -->
-        <section id="keahlian" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+        <section id="keahlian" class="reveal space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
             <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">02.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Matriks Keahlian</h2></div>
             <div id="skillsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono"></div>
         </section>
 
-        <!-- PENGALAMAN -->
-        <section id="pengalaman" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+        <section id="pengalaman" class="reveal space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
             <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">03.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Pengalaman Kerja</h2></div>
             <div id="experienceContainer" class="space-y-8"></div>
         </section>
 
-        <!-- PROYEK CLOUD -->
-        <section id="proyek" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">04.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Proyek Pilihan</h2></div>
+        <!-- TEASER PROYEK (halaman penuh ada di #/proyek) -->
+        <section id="proyek" class="reveal space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">04.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Proyek Pilihan</h2></div>
+                <a href="#/proyek" class="text-xs font-mono text-sky-600 dark:text-sky-400 hover:underline whitespace-nowrap">Lihat Semua →</a>
+            </div>
             <div id="firebaseStatusProj" class="text-[10px] font-mono text-emerald-500 animate-pulse">Menghubungkan ke Cloud...</div>
-            <div id="publicProjectsContainer" class="space-y-4"></div>
+            <div id="teaserProjectsContainer" class="space-y-4"></div>
         </section>
 
-        <!-- ARTIKEL CLOUD -->
-        <section id="artikel" class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+        <section id="artikel" class="reveal space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
             <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">05.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Artikel & Riset</h2></div>
             <div id="publicArticlesContainer" class="space-y-3"></div>
         </section>
 
-        <!-- KONTAK -->
-        <section id="kontak" class="space-y-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">06.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Kontak & Kolaborasi</h2></div>
+        <section id="testimoni" class="reveal space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">06.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Testimoni</h2></div>
+            <div id="testimonialsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </section>
+
+        <section id="kontak" class="reveal space-y-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+            <div class="flex items-center gap-2"><span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">07.</span><h2 class="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold">Kontak & Kolaborasi</h2></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-4">
                     <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">Silakan kirimkan pesan langsung melalui formulir atau kontak berikut.</p>
@@ -152,10 +169,20 @@
                     <div id="socialLinksContainer" class="flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-500 pt-2"></div>
                 </div>
                 <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative">
-                    <form onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
-                        <input type="text" name="name" required placeholder="Nama Lengkap *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                        <input type="email" name="email" required placeholder="Alamat Email *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                        <textarea name="message" rows="3" required placeholder="Pesan Kebutuhan *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                    <form onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs" novalidate>
+                        <input type="text" name="_honey" class="honeypot-field" tabindex="-1" autocomplete="off">
+                        <div>
+                            <input type="text" name="name" id="fName" required minlength="2" placeholder="Nama Lengkap *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                            <p class="field-error hidden text-rose-500 text-[10px] mt-1 font-mono"></p>
+                        </div>
+                        <div>
+                            <input type="email" name="email" id="fEmail" required placeholder="Alamat Email *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                            <p class="field-error hidden text-rose-500 text-[10px] mt-1 font-mono"></p>
+                        </div>
+                        <div>
+                            <textarea name="message" id="fMessage" rows="3" required minlength="10" placeholder="Pesan Kebutuhan *" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                            <p class="field-error hidden text-rose-500 text-[10px] mt-1 font-mono"></p>
+                        </div>
                         <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 font-semibold font-mono">Kirimkan Pesan</button>
                     </form>
                     <div id="formSuccess" class="hidden absolute inset-0 bg-white dark:bg-zinc-900 rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-2">
@@ -167,22 +194,51 @@
         </section>
     </main>
 
-    <footer class="border-t border-zinc-200 dark:border-zinc-800 py-8 bg-zinc-50 dark:bg-zinc-950">
+    <footer id="mainFooter" class="border-t border-zinc-200 dark:border-zinc-800 py-8 bg-zinc-50 dark:bg-zinc-950">
         <div class="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-400">
             <div id="footerCopyright"></div>
             <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100">Ke Atas ↑</a>
         </div>
     </footer>
 
-    <!-- MODAL LOGIN ADMIN AMAN -->
-    <div id="adminLoginModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <!-- ======================= SUB-HALAMAN: DAFTAR PROYEK ======================= -->
+    <div id="pageProyekList" class="hidden max-w-4xl mx-auto px-6 py-12 sm:py-16 space-y-6">
+        <div class="text-xs font-mono text-zinc-400">
+            <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline">Beranda</a> / <span class="text-zinc-600 dark:text-zinc-300">Proyek</span>
+        </div>
+        <div class="space-y-2">
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Semua Proyek</h1>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Kumpulan proyek yang pernah saya kerjakan, lengkap dengan detail teknis dan tautannya.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <input id="projectSearch" type="text" placeholder="Cari proyek atau teknologi..." class="w-full sm:w-64 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs focus:outline-none">
+            <div id="projectFilters" class="flex flex-wrap gap-2 text-[11px] font-mono"></div>
+        </div>
+        <div id="fullProjectsContainer" class="space-y-4"></div>
+        <p id="projectsEmptyState" class="hidden text-xs font-mono text-zinc-400 py-4">Tidak ada proyek yang cocok dengan pencarian.</p>
+    </div>
+
+    <!-- ======================= SUB-HALAMAN: DETAIL PROYEK ======================= -->
+    <div id="pageProyekDetail" class="hidden max-w-3xl mx-auto px-6 py-12 sm:py-16 space-y-6">
+        <div id="detailBreadcrumb" class="text-xs font-mono text-zinc-400">
+            <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline">Beranda</a> / <a href="#/proyek" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline">Proyek</a> / <span class="text-zinc-600 dark:text-zinc-300" id="detailBreadcrumbTitle">...</span>
+        </div>
+        <div id="detailContent"></div>
+    </div>
+
+    <button id="backToTop" aria-label="Kembali ke atas" class="hidden fixed bottom-6 left-6 w-10 h-10 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg items-center justify-center z-[55] hover:opacity-90">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    <!-- MODAL LOGIN ADMIN -->
+    <div id="adminLoginModal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 max-w-sm w-full rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3 mb-4">
-                <h3 class="font-bold text-sm flex items-center gap-2"><span>🔐</span> Otorisasi Sistem</h3>
-                <button onclick="closeLoginModal()" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">✕</button>
+                <h3 id="loginModalTitle" class="font-bold text-sm flex items-center gap-2"><span>🔐</span> Otorisasi Sistem</h3>
+                <button onclick="closeLoginModal()" aria-label="Tutup" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">✕</button>
             </div>
             <form id="adminFormLogin" class="space-y-3 text-xs">
-                <input type="text" id="adminUser" required placeholder="Username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                <input type="email" id="adminUser" required placeholder="Email Admin" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                 <input type="password" id="adminPass" required placeholder="Password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                 <p id="loginError" class="text-rose-500 hidden font-mono text-[11px]">Kredensial ditolak!</p>
                 <div class="pt-2 flex justify-end gap-2">
@@ -222,21 +278,30 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800"><div class="text-xs font-mono text-zinc-500 mb-2">Total Proyek Cloud</div><div id="dashCountProj" class="text-3xl font-bold text-emerald-500">0</div></div>
                     <div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800"><div class="text-xs font-mono text-zinc-500 mb-2">Total Artikel Cloud</div><div id="dashCountArt" class="text-3xl font-bold text-sky-500">0</div></div>
+                    <div class="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800"><div class="text-xs font-mono text-zinc-500 mb-2">Pesan Masuk</div><div class="text-3xl font-bold text-amber-500">via email</div></div>
+                </div>
+                <div class="bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 rounded-xl p-4 text-xs leading-relaxed space-y-1">
+                    <p>✅ Login admin kini memakai <strong>Firebase Authentication</strong> (email/password) yang sesungguhnya, bukan lagi kredensial statis di kode. Pastikan rule Firestore Anda mensyaratkan <code>request.auth != null</code> agar tulis/hapus data benar-benar terlindungi di server, bukan hanya di tampilan.</p>
+                    <p>✅ Semua teks dari artikel/proyek kini di-escape sebelum ditampilkan (anti-XSS), dan tautan yang bukan http/https/mailto otomatis diblokir.</p>
                 </div>
             </div>
 
             <div id="tabArtikel" class="admin-tab-content hidden max-w-3xl mx-auto space-y-8">
                 <div><h1 class="text-2xl font-bold">Manajemen Artikel</h1><p class="text-xs font-mono text-zinc-500">Sinkronisasi Real-Time ke Firebase</p></div>
                 <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
-                    <h3 class="font-bold text-sm mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-2">➕ Tulis Artikel Baru</h3>
+                    <h3 id="artFormTitle" class="font-bold text-sm mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-2">➕ Tulis Artikel Baru</h3>
                     <form onsubmit="handleArticleUpload(event)" class="space-y-3 text-xs">
-                        <input type="text" id="aTitle" required placeholder="Judul Artikel..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <input type="hidden" id="aEditId" value="">
+                        <input type="text" id="aTitle" required maxlength="120" placeholder="Judul Artikel..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                         <div class="grid grid-cols-2 gap-3">
                             <input type="text" id="aYear" required value="2026" placeholder="Tahun" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                             <input type="text" id="aLink" required value="#artikel" placeholder="Link URL" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                         </div>
-                        <textarea id="aDesc" rows="3" required placeholder="Ringkasan atau sinopsis artikel..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
-                        <button type="submit" id="btnSubmitArt" class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-semibold transition-colors">Unggah ke Cloud</button>
+                        <textarea id="aDesc" rows="3" required maxlength="500" placeholder="Ringkasan atau sinopsis artikel..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                        <div class="flex gap-2">
+                            <button type="submit" id="btnSubmitArt" class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-semibold transition-colors">Unggah ke Cloud</button>
+                            <button type="button" id="btnCancelArtEdit" onclick="cancelArticleEdit()" class="hidden px-5 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 font-mono">Batal Edit</button>
+                        </div>
                     </form>
                 </div>
                 <div>
@@ -248,17 +313,21 @@
             <div id="tabProyek" class="admin-tab-content hidden max-w-3xl mx-auto space-y-8">
                 <div><h1 class="text-2xl font-bold">Manajemen Proyek</h1><p class="text-xs font-mono text-zinc-500">Sinkronisasi Real-Time ke Firebase</p></div>
                 <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
-                    <h3 class="font-bold text-sm mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-2">➕ Tambah Proyek Baru</h3>
+                    <h3 id="projFormTitle" class="font-bold text-sm mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-2">➕ Tambah Proyek Baru</h3>
                     <form onsubmit="handleProjectUpload(event)" class="space-y-3 text-xs">
-                        <input type="text" id="pTitle" required placeholder="Judul Proyek..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                        <input type="text" id="pSub" required placeholder="Subjudul (cth: Web App Platform)..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <input type="hidden" id="pEditId" value="">
+                        <input type="text" id="pTitle" required maxlength="120" placeholder="Judul Proyek..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
+                        <input type="text" id="pSub" required maxlength="150" placeholder="Subjudul (cth: Web App Platform)..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                         <div class="grid grid-cols-2 gap-3">
                             <select id="pStatus" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none text-zinc-500"><option value="Live">Live</option><option value="Production">Production</option><option value="Beta">Beta</option><option value="Open Source">Open Source</option></select>
                             <input type="text" id="pLink" required value="https://github.com" placeholder="Link Tautan" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
                         </div>
                         <input type="text" id="pTags" required placeholder="Teknologi (koma: React, Node, SQL)..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none">
-                        <textarea id="pDesc" rows="3" required placeholder="Deskripsi fitur dan tantangan proyek..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
-                        <button type="submit" id="btnSubmitProj" class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-semibold transition-colors">Unggah ke Cloud</button>
+                        <textarea id="pDesc" rows="3" required maxlength="800" placeholder="Deskripsi fitur dan tantangan proyek..." class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea>
+                        <div class="flex gap-2">
+                            <button type="submit" id="btnSubmitProj" class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-semibold transition-colors">Unggah ke Cloud</button>
+                            <button type="button" id="btnCancelProjEdit" onclick="cancelProjectEdit()" class="hidden px-5 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 font-mono">Batal Edit</button>
+                        </div>
                     </form>
                 </div>
                 <div>
@@ -288,21 +357,45 @@
             prinsip: [{ judul: "Clean Architecture", deskripsi: "Pemisahan modul logika yang jelas, teruji dengan automated testing." }, { judul: "Efisiensi & Skalabilitas", deskripsi: "Optimasi kueri basis data dan strategi multi-layer caching." }, { judul: "Komunikasi Terbuka", deskripsi: "Dokumentasi API terstandarisasi, estimasi transparan." }],
             keahlian: [{ kategori: "Frontend", warnaDot: "bg-cyan-500", item: ["React / Next.js", "TypeScript", "Tailwind CSS"] }, { kategori: "Backend", warnaDot: "bg-emerald-500", item: ["Node.js / Express", "Go (Golang)", "RESTful API"] }, { kategori: "Database", warnaDot: "bg-indigo-500", item: ["PostgreSQL", "Redis Caching", "Prisma ORM"] }, { kategori: "DevOps", warnaDot: "bg-amber-500", item: ["Docker Container", "AWS Cloud Basics", "Linux Server"] }],
             pengalaman: [{ posisi: "Lead Software Engineer", perusahaan: "PT Digital Kreasi", periode: "2023 — Sekarang", poin: ["Memimpin transformasi arsitektur Golang API.", "Mengurangi latensi pencarian data."] }, { posisi: "Senior Full-Stack", perusahaan: "Solusi Mandiri", periode: "2021 — 2023", poin: ["Mengembangkan modul dashboard monitoring keuangan."] }],
-            proyekDefault: [{ judul: "OmniScale Hub", subjudul: "Platform Pemantauan Server", status: "Live", deskripsi: "Sistem analitik terdistribusi dengan visualisasi real-time.", tags: ["Next.js", "Go API"], linkTautan: "#" }],
+            proyekDefault: [{ judul: "OmniScale Hub", subjudul: "Platform Pemantauan Server", status: "Live", deskripsi: "Sistem analitik terdistribusi dengan visualisasi real-time untuk memantau kesehatan infrastruktur secara menyeluruh.", tags: ["Next.js", "Go API"], linkTautan: "#" }],
             artikelDefault: [{ judul: "Strategi Multi-Layer Caching", deskripsi: "Mengatasi cache invalidation dan konsistensi data.", tahun: "2026", linkTautan: "#artikel" }],
+            testimoni: [
+                { nama: "Rina Wulandari", peran: "Product Manager, Digital Kreasi", pesan: "Azim menerjemahkan kebutuhan bisnis yang rumit menjadi arsitektur yang rapi dan mudah dipelihara tim." },
+                { nama: "Bagus Prasetyo", peran: "CTO, Solusi Mandiri", pesan: "Komunikasinya jelas, estimasinya akurat, dan kualitas kodenya konsisten tinggi dari awal sampai akhir proyek." }
+            ],
             sosial: [
-                { nama: "GitHub", url: "https://github.com" }, 
-                { nama: "LinkedIn", url: "https://linkedin.com" },
-                { nama: "Instagram", url: "https://instagram.com" },
-                { nama: "X (Twitter)", url: "https://twitter.com" },
-                { nama: "Medium", url: "https://medium.com" },
-                { nama: "Dribbble", url: "https://dribbble.com" }
+                { nama: "GitHub", url: "https://github.com" }, { nama: "LinkedIn", url: "https://linkedin.com" },
+                { nama: "Instagram", url: "https://instagram.com" }, { nama: "X (Twitter)", url: "https://twitter.com" },
+                { nama: "Medium", url: "https://medium.com" }, { nama: "Dribbble", url: "https://dribbble.com" }
             ]
         };
 
         let db = null;
         let cloudArticles = [];
         let cloudProjects = [];
+        let activeTagFilter = 'Semua';
+        let activeSearch = '';
+        let lastContactSubmit = 0;
+
+        // ---------- Keamanan: escaping & validasi tautan ----------
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, (c) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+        function safeUrl(url) {
+            if (!url) return '#';
+            const trimmed = String(url).trim();
+            if (/^https?:\/\//i.test(trimmed) || /^mailto:/i.test(trimmed) || trimmed.startsWith('#') || trimmed.startsWith('/')) {
+                return trimmed;
+            }
+            return '#';
+        }
+        function slugify(text, fallbackIndex) {
+            const base = String(text || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return base ? base : 'proyek-' + fallbackIndex;
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyBEo067vVnWeqKrDzN56Xjm0dDIrzw9Img",
@@ -312,16 +405,14 @@
             messagingSenderId: "1002746551885",
             appId: "1:1002746551885:web:abe5dfafb6346ce694c604"
         };
+        // Catatan: config Firebase di sisi klien memang publik secara desain.
+        // Keamanan data Anda ditentukan oleh Firestore Security Rules di Firebase Console, bukan oleh menyembunyikan config ini.
 
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             try {
-                // Cache data secara lokal supaya saat refresh, data lama langsung
-                // tampil dari cache sambil menunggu koneksi ke server tersambung.
-                db.enablePersistence({ synchronizeTabs: true }).catch(err => {
-                    console.warn("Cache offline tidak aktif:", err.code);
-                });
+                db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Cache offline tidak aktif:", err.code));
             } catch (e) { console.warn("Cache offline tidak didukung:", e); }
             initCloudListeners();
         } catch (e) {
@@ -339,9 +430,6 @@
             if (!db) return;
             setCloudStatus('Menghubungkan ke Cloud...', true);
 
-            // onSnapshot = listener real-time: otomatis mencoba ulang koneksi
-            // di belakang layar jika jaringan sempat gagal/lambat saat refresh,
-            // dan langsung update tampilan begitu data tersedia (dari cache atau server).
             db.collection('artikel').orderBy('createdAt', 'desc').onSnapshot(snap => {
                 cloudArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 document.getElementById('dashCountArt').innerText = cloudArticles.length;
@@ -365,40 +453,116 @@
 
         async function handleArticleUpload(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSubmitArt'); btn.innerText = "Mengunggah..."; btn.disabled = true;
+            const btn = document.getElementById('btnSubmitArt'); btn.innerText = "Menyimpan..."; btn.disabled = true;
+            const editId = document.getElementById('aEditId').value;
+            const payload = {
+                judul: document.getElementById('aTitle').value.trim().slice(0, 120),
+                tahun: document.getElementById('aYear').value.trim().slice(0, 10),
+                linkTautan: document.getElementById('aLink').value.trim(),
+                deskripsi: document.getElementById('aDesc').value.trim().slice(0, 500)
+            };
             try {
-                await db.collection('artikel').add({
-                    judul: document.getElementById('aTitle').value, tahun: document.getElementById('aYear').value,
-                    linkTautan: document.getElementById('aLink').value, deskripsi: document.getElementById('aDesc').value,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                showToast('✓ Artikel sukses di-cloud!'); e.target.reset();
+                if (editId) {
+                    await db.collection('artikel').doc(editId).update(payload);
+                    showToast('✓ Artikel diperbarui!'); cancelArticleEdit();
+                } else {
+                    payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('artikel').add(payload);
+                    showToast('✓ Artikel sukses di-cloud!');
+                }
+                e.target.reset();
+                document.getElementById('aYear').value = '2026';
+                document.getElementById('aLink').value = '#artikel';
             } catch(err) { showToast('Gagal: Periksa Rules Firestore Anda'); }
             btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
+        }
+
+        function editArticle(id) {
+            const art = cloudArticles.find(a => a.id === id);
+            if (!art) return;
+            document.getElementById('aEditId').value = id;
+            document.getElementById('aTitle').value = art.judul || '';
+            document.getElementById('aYear').value = art.tahun || '2026';
+            document.getElementById('aLink').value = art.linkTautan || '#artikel';
+            document.getElementById('aDesc').value = art.deskripsi || '';
+            document.getElementById('artFormTitle').innerText = '✏️ Edit Artikel';
+            document.getElementById('btnSubmitArt').innerText = 'Simpan Perubahan';
+            document.getElementById('btnCancelArtEdit').classList.remove('hidden');
+            document.getElementById('aTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        function cancelArticleEdit() {
+            document.getElementById('aEditId').value = '';
+            document.getElementById('artFormTitle').innerText = '➕ Tulis Artikel Baru';
+            document.getElementById('btnSubmitArt').innerText = 'Unggah ke Cloud';
+            document.getElementById('btnCancelArtEdit').classList.add('hidden');
+            document.getElementById('aTitle').closest('form').reset();
+            document.getElementById('aYear').value = '2026';
+            document.getElementById('aLink').value = '#artikel';
         }
 
         async function handleProjectUpload(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSubmitProj'); btn.innerText = "Mengunggah..."; btn.disabled = true;
+            const btn = document.getElementById('btnSubmitProj'); btn.innerText = "Menyimpan..."; btn.disabled = true;
+            const editId = document.getElementById('pEditId').value;
+            const tagsArray = document.getElementById('pTags').value.split(',').map(t => t.trim()).filter(t => t !== "").slice(0, 12);
+            const payload = {
+                judul: document.getElementById('pTitle').value.trim().slice(0, 120),
+                subjudul: document.getElementById('pSub').value.trim().slice(0, 150),
+                status: document.getElementById('pStatus').value,
+                linkTautan: document.getElementById('pLink').value.trim(),
+                deskripsi: document.getElementById('pDesc').value.trim().slice(0, 800),
+                tags: tagsArray
+            };
             try {
-                const tagsStr = document.getElementById('pTags').value;
-                const tagsArray = tagsStr.split(',').map(tag => tag.trim()).filter(tag => tag !== "");
-                await db.collection('proyek').add({
-                    judul: document.getElementById('pTitle').value, subjudul: document.getElementById('pSub').value,
-                    status: document.getElementById('pStatus').value, linkTautan: document.getElementById('pLink').value,
-                    deskripsi: document.getElementById('pDesc').value, tags: tagsArray,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                showToast('✓ Proyek sukses di-cloud!'); e.target.reset();
+                if (editId) {
+                    await db.collection('proyek').doc(editId).update(payload);
+                    showToast('✓ Proyek diperbarui!'); cancelProjectEdit();
+                } else {
+                    payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('proyek').add(payload);
+                    showToast('✓ Proyek sukses di-cloud!');
+                }
+                e.target.reset();
+                document.getElementById('pLink').value = 'https://github.com';
             } catch(err) { showToast('Gagal: Periksa Rules Firestore Anda'); }
             btn.innerText = "Unggah ke Cloud"; btn.disabled = false;
         }
 
+        function editProject(id) {
+            const proj = cloudProjects.find(p => p.id === id);
+            if (!proj) return;
+            document.getElementById('pEditId').value = id;
+            document.getElementById('pTitle').value = proj.judul || '';
+            document.getElementById('pSub').value = proj.subjudul || '';
+            document.getElementById('pStatus').value = proj.status || 'Live';
+            document.getElementById('pLink').value = proj.linkTautan || 'https://github.com';
+            document.getElementById('pTags').value = (proj.tags || []).join(', ');
+            document.getElementById('pDesc').value = proj.deskripsi || '';
+            document.getElementById('projFormTitle').innerText = '✏️ Edit Proyek';
+            document.getElementById('btnSubmitProj').innerText = 'Simpan Perubahan';
+            document.getElementById('btnCancelProjEdit').classList.remove('hidden');
+            document.getElementById('pTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        function cancelProjectEdit() {
+            document.getElementById('pEditId').value = '';
+            document.getElementById('projFormTitle').innerText = '➕ Tambah Proyek Baru';
+            document.getElementById('btnSubmitProj').innerText = 'Unggah ke Cloud';
+            document.getElementById('btnCancelProjEdit').classList.add('hidden');
+            document.getElementById('pTitle').closest('form').reset();
+            document.getElementById('pLink').value = 'https://github.com';
+        }
+
         async function deleteCloudItem(collectionName, id) {
             if (confirm('Hapus data ini secara permanen dari Cloud?')) {
-                try { await db.collection(collectionName).doc(id).delete(); showToast('✓ Data dihapus.'); } 
+                try { await db.collection(collectionName).doc(id).delete(); showToast('✓ Data dihapus.'); }
                 catch(err) { showToast('Gagal hapus: ' + err.message); }
             }
+        }
+
+        function getMergedProjects() {
+            const defaults = DATA_PORTOFOLIO.proyekDefault.map((p, i) => ({ ...p, id: 'default-' + i, _slug: slugify(p.judul, i) }));
+            const cloud = cloudProjects.map((p, i) => ({ ...p, _slug: p.id }));
+            return [...cloud, ...defaults];
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -407,30 +571,42 @@
             document.getElementById('heroName').innerText = P.nama; document.getElementById('heroRole').innerText = P.peran; document.getElementById('heroBio').innerText = P.ringkasan;
             document.getElementById('aboutDetail').innerText = P.tentangDetail; document.getElementById('heroBadgeText').innerText = P.statusBadge;
             document.getElementById('mainEmailVal').innerText = P.email; document.getElementById('heroEmailLabel').innerText = P.email; document.getElementById('footerCopyright').innerText = P.copyright;
-            
+
             document.getElementById('socialLinksContainer').innerHTML = DATA_PORTOFOLIO.sosial.map((soc, idx) => `
                 <div class="flex items-center gap-2">
-                    <a href="${soc.url}" target="_blank" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline transition-colors">${soc.nama}</a>
+                    <a href="${escapeHtml(safeUrl(soc.url))}" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline transition-colors">${escapeHtml(soc.nama)}</a>
                     ${idx < DATA_PORTOFOLIO.sosial.length - 1 ? '<span class="text-zinc-300 dark:text-zinc-700 mx-1">•</span>' : ''}
                 </div>
             `).join('');
-            
+
+            document.getElementById('testimonialsContainer').innerHTML = DATA_PORTOFOLIO.testimoni.map(t => `
+                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3">
+                    <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">"${escapeHtml(t.pesan)}"</p>
+                    <div class="text-xs font-mono">
+                        <div class="font-semibold text-zinc-900 dark:text-zinc-100">${escapeHtml(t.nama)}</div>
+                        <div class="text-zinc-400">${escapeHtml(t.peran)}</div>
+                    </div>
+                </div>
+            `).join('');
+
             renderProfileSections();
             syncAllViews();
+            initScrollFeatures();
+            initRouter();
         });
 
         function renderProfileSections() {
             document.getElementById('statsContainer').innerHTML = DATA_PORTOFOLIO.statistik.map(s => `
                 <div class="space-y-0.5">
-                    <div class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">${s.nilai}</div>
-                    <div class="text-[11px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400">${s.label}</div>
+                    <div class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">${escapeHtml(s.nilai)}</div>
+                    <div class="text-[11px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400">${escapeHtml(s.label)}</div>
                 </div>
             `).join('');
 
             document.getElementById('principlesContainer').innerHTML = DATA_PORTOFOLIO.prinsip.map(p => `
                 <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-1.5">
-                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">${p.judul}</h3>
-                    <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">${p.deskripsi}</p>
+                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">${escapeHtml(p.judul)}</h3>
+                    <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">${escapeHtml(p.deskripsi)}</p>
                 </div>
             `).join('');
 
@@ -438,89 +614,257 @@
                 <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3">
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full ${k.warnaDot}"></span>
-                        <span class="font-semibold text-zinc-900 dark:text-zinc-100">${k.kategori}</span>
+                        <span class="font-semibold text-zinc-900 dark:text-zinc-100">${escapeHtml(k.kategori)}</span>
                     </div>
-                    <ul class="space-y-1.5 text-zinc-500 dark:text-zinc-400">
-                        ${k.item.map(i => `<li>${i}</li>`).join('')}
-                    </ul>
+                    <ul class="space-y-1.5 text-zinc-500 dark:text-zinc-400">${k.item.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
                 </div>
             `).join('');
 
             document.getElementById('experienceContainer').innerHTML = DATA_PORTOFOLIO.pengalaman.map(e => `
                 <div class="space-y-2">
                     <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                        <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${e.posisi} · <span class="font-normal text-zinc-500 dark:text-zinc-400">${e.perusahaan}</span></h3>
-                        <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${e.periode}</span>
+                        <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${escapeHtml(e.posisi)} · <span class="font-normal text-zinc-500 dark:text-zinc-400">${escapeHtml(e.perusahaan)}</span></h3>
+                        <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${escapeHtml(e.periode)}</span>
                     </div>
-                    <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">
-                        ${e.poin.map(pt => `<li>${pt}</li>`).join('')}
-                    </ul>
+                    <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">${e.poin.map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}</ul>
                 </div>
             `).join('');
         }
+
+        function projectCardHtml(proj, opts) {
+            opts = opts || {};
+            const link = opts.internalLink ? ('#/proyek/' + encodeURIComponent(proj._slug)) : safeUrl(proj.linkTautan);
+            const target = opts.internalLink ? '' : 'target="_blank" rel="noopener noreferrer"';
+            return `
+                <a href="${link}" ${target} class="block p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 hover:border-sky-500/50 transition-colors">
+                    <div class="flex justify-between gap-2"><div><h3 class="font-semibold text-sm">${escapeHtml(proj.judul)}</h3><p class="text-xs font-mono text-zinc-400">${escapeHtml(proj.subjudul)}</p></div><span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 whitespace-nowrap">${escapeHtml(proj.status)}</span></div>
+                    <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-3">${escapeHtml(proj.deskripsi)}</p>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-xs font-mono mt-3">
+                        <div class="flex gap-2 text-zinc-400">${(proj.tags || []).map((t, idx) => `<span>${escapeHtml(t)}</span>${idx < proj.tags.length - 1 ? '<span>•</span>' : ''}`).join('')}</div>
+                        <span class="hover:underline text-sky-600 dark:text-sky-400">${opts.internalLink ? 'Lihat Detail →' : 'Buka Tautan ↗'}</span>
+                    </div>
+                </a>`;
+        }
+
+        function getAllTags(projects) {
+            const set = new Set();
+            projects.forEach(p => (p.tags || []).forEach(t => set.add(t)));
+            return ['Semua', ...Array.from(set)];
+        }
+
+        function renderProjectFilters(projects) {
+            const el = document.getElementById('projectFilters');
+            if (!el) return;
+            const tags = getAllTags(projects);
+            el.innerHTML = tags.map(tag => `
+                <button class="filter-chip ${tag === activeTagFilter ? 'active' : ''} px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800" data-tag="${escapeHtml(tag)}" onclick="setTagFilter('${tag.replace(/'/g, "\\'")}')">${escapeHtml(tag)}</button>
+            `).join('');
+        }
+
+        function setTagFilter(tag) { activeTagFilter = tag; syncAllViews(); }
 
         function syncAllViews() {
             const allArticles = [...cloudArticles, ...DATA_PORTOFOLIO.artikelDefault];
             document.getElementById('publicArticlesContainer').innerHTML = allArticles.map(art => `
-                <a href="${art.linkTautan}" class="block p-4 -mx-4 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900/60 transition-colors group">
-                    <div class="flex items-baseline justify-between gap-4"><h3 class="font-medium text-sm group-hover:underline">${art.judul}</h3><span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${art.tahun}</span></div>
-                    <p class="text-xs text-zinc-500 mt-1">${art.deskripsi}</p>
+                <a href="${escapeHtml(safeUrl(art.linkTautan))}" class="block p-4 -mx-4 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900/60 transition-colors group">
+                    <div class="flex items-baseline justify-between gap-4"><h3 class="font-medium text-sm group-hover:underline">${escapeHtml(art.judul)}</h3><span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${escapeHtml(art.tahun)}</span></div>
+                    <p class="text-xs text-zinc-500 mt-1">${escapeHtml(art.deskripsi)}</p>
                 </a>
             `).join('');
 
-            const allProjects = [...cloudProjects, ...DATA_PORTOFOLIO.proyekDefault];
-            document.getElementById('publicProjectsContainer').innerHTML = allProjects.map(proj => `
-                <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30">
-                    <div class="flex justify-between gap-2"><div><h3 class="font-semibold text-sm">${proj.judul}</h3><p class="text-xs font-mono text-zinc-400">${proj.subjudul}</p></div><span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">${proj.status}</span></div>
-                    <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-3">${proj.deskripsi}</p>
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-xs font-mono mt-3">
-                        <div class="flex gap-2 text-zinc-400">${proj.tags.map((t, idx) => `<span>${t}</span>${idx < proj.tags.length - 1 ? '<span>•</span>' : ''}`).join('')}</div>
-                        <a href="${proj.linkTautan}" target="_blank" class="hover:underline">Lihat Detail ↗</a>
+            const allProjects = getMergedProjects();
+
+            // Teaser di beranda: 3 proyek terbaru, mengarah ke sub-halaman detail
+            document.getElementById('teaserProjectsContainer').innerHTML = allProjects.slice(0, 3).map(p => projectCardHtml(p, { internalLink: true })).join('');
+
+            // Halaman penuh /proyek (jika sedang terbuka)
+            renderProjectFilters(allProjects);
+            let filtered = allProjects;
+            if (activeTagFilter !== 'Semua') filtered = filtered.filter(p => (p.tags || []).includes(activeTagFilter));
+            if (activeSearch.trim() !== '') {
+                const q = activeSearch.trim().toLowerCase();
+                filtered = filtered.filter(p =>
+                    (p.judul || '').toLowerCase().includes(q) ||
+                    (p.subjudul || '').toLowerCase().includes(q) ||
+                    (p.tags || []).some(t => t.toLowerCase().includes(q))
+                );
+            }
+            const fullContainer = document.getElementById('fullProjectsContainer');
+            if (fullContainer) {
+                document.getElementById('projectsEmptyState').classList.toggle('hidden', filtered.length !== 0);
+                fullContainer.innerHTML = filtered.map(p => projectCardHtml(p, { internalLink: true })).join('');
+            }
+
+            // Jika sedang di halaman detail, refresh isinya (mis. setelah admin edit real-time)
+            if (window.location.hash.startsWith('#/proyek/')) renderProjectDetail(decodeURIComponent(window.location.hash.replace('#/proyek/', '')));
+
+            document.getElementById('adminArticleList').innerHTML = cloudArticles.length === 0 ? '<p class="text-xs text-zinc-500 font-mono">Data Kosong</p>' : cloudArticles.map(art => `
+                <div class="flex items-center justify-between p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+                    <div><h4 class="text-sm font-medium">${escapeHtml(art.judul)}</h4><p class="text-[11px] text-zinc-500 mt-0.5">${escapeHtml(art.tahun)}</p></div>
+                    <div class="flex gap-2">
+                        <button onclick="editArticle('${art.id}')" class="px-3 py-1.5 rounded-lg bg-sky-500/10 text-sky-600 text-xs font-mono hover:bg-sky-500 hover:text-white transition-colors">Edit</button>
+                        <button onclick="deleteCloudItem('artikel', '${art.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 text-xs font-mono hover:bg-rose-500 hover:text-white transition-colors">Hapus</button>
                     </div>
                 </div>
             `).join('');
 
-            document.getElementById('adminArticleList').innerHTML = cloudArticles.length === 0 ? '<p class="text-xs text-zinc-500 font-mono">Data Kosong</p>' : cloudArticles.map(art => `
-                <div class="flex items-center justify-between p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
-                    <div><h4 class="text-sm font-medium">${art.judul}</h4><p class="text-[11px] text-zinc-500 mt-0.5">${art.tahun}</p></div>
-                    <button onclick="deleteCloudItem('artikel', '${art.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 text-xs font-mono hover:bg-rose-500 hover:text-white transition-colors">Hapus</button>
-                </div>
-            `).join('');
-            
             document.getElementById('adminProjectList').innerHTML = cloudProjects.length === 0 ? '<p class="text-xs text-zinc-500 font-mono">Data Kosong</p>' : cloudProjects.map(proj => `
                 <div class="flex items-center justify-between p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
-                    <div><h4 class="text-sm font-medium">${proj.judul}</h4><p class="text-[11px] text-zinc-500 mt-0.5">${proj.status}</p></div>
-                    <button onclick="deleteCloudItem('proyek', '${proj.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 text-xs font-mono hover:bg-rose-500 hover:text-white transition-colors">Hapus</button>
+                    <div><h4 class="text-sm font-medium">${escapeHtml(proj.judul)}</h4><p class="text-[11px] text-zinc-500 mt-0.5">${escapeHtml(proj.status)}</p></div>
+                    <div class="flex gap-2">
+                        <button onclick="editProject('${proj.id}')" class="px-3 py-1.5 rounded-lg bg-sky-500/10 text-sky-600 text-xs font-mono hover:bg-sky-500 hover:text-white transition-colors">Edit</button>
+                        <button onclick="deleteCloudItem('proyek', '${proj.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 text-xs font-mono hover:bg-rose-500 hover:text-white transition-colors">Hapus</button>
+                    </div>
                 </div>
             `).join('');
         }
 
-        document.getElementById('adminFormLogin').addEventListener('submit', (e) => {
+        document.getElementById('projectSearch') && document.getElementById('projectSearch').addEventListener('input', (e) => {
+            activeSearch = e.target.value;
+            syncAllViews();
+        });
+
+        // ---------- Router sub-halaman (#/proyek dan #/proyek/:slug) ----------
+        function renderProjectDetail(slug) {
+            const proj = getMergedProjects().find(p => p._slug === slug);
+            const wrap = document.getElementById('detailContent');
+            const crumbTitle = document.getElementById('detailBreadcrumbTitle');
+            if (!proj) {
+                crumbTitle.innerText = 'Tidak ditemukan';
+                wrap.innerHTML = `
+                    <div class="py-16 text-center space-y-3">
+                        <div class="text-3xl">🔍</div>
+                        <h1 class="text-xl font-bold">Proyek tidak ditemukan</h1>
+                        <p class="text-sm text-zinc-500">Proyek yang Anda cari mungkin sudah dihapus atau tautannya salah.</p>
+                        <a href="#/proyek" class="inline-block mt-2 px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-xs font-mono font-semibold">← Kembali ke Semua Proyek</a>
+                    </div>`;
+                return;
+            }
+            crumbTitle.innerText = proj.judul;
+            wrap.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-start justify-between gap-4 flex-wrap">
+                        <div class="space-y-1">
+                            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">${escapeHtml(proj.judul)}</h1>
+                            <p class="text-sm font-mono text-zinc-500">${escapeHtml(proj.subjudul)}</p>
+                        </div>
+                        <span class="text-xs font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 whitespace-nowrap">${escapeHtml(proj.status)}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${(proj.tags || []).map(t => `<span class="text-[11px] font-mono px-2.5 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500">${escapeHtml(t)}</span>`).join('')}
+                    </div>
+                    <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">${escapeHtml(proj.deskripsi)}</p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <a href="${escapeHtml(safeUrl(proj.linkTautan))}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-xs font-mono font-semibold hover:opacity-90">Buka Proyek ↗</a>
+                        <button onclick="copyProjectLink('${proj._slug}')" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono hover:bg-zinc-100 dark:hover:bg-zinc-900">Salin Tautan Halaman</button>
+                        <a href="#/proyek" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono hover:bg-zinc-100 dark:hover:bg-zinc-900">← Semua Proyek</a>
+                    </div>
+                </div>`;
+        }
+
+        function copyProjectLink(slug) {
+            const url = window.location.origin + window.location.pathname + '#/proyek/' + encodeURIComponent(slug);
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(() => showToast('✓ Tautan disalin!')).catch(() => showToast('Gagal menyalin tautan'));
+            } else {
+                showToast('Salin manual: ' + url);
+            }
+        }
+
+        function initRouter() {
+            window.addEventListener('hashchange', route);
+            route();
+        }
+
+        function route() {
+            const hash = window.location.hash || '';
+            const homeEl = document.getElementById('mainHome');
+            const footerEl = document.getElementById('mainFooter');
+            const listEl = document.getElementById('pageProyekList');
+            const detailEl = document.getElementById('pageProyekDetail');
+
+            if (hash.startsWith('#/proyek/')) {
+                const slug = decodeURIComponent(hash.replace('#/proyek/', ''));
+                homeEl.classList.add('hidden'); footerEl.classList.add('hidden');
+                listEl.classList.add('hidden'); detailEl.classList.remove('hidden');
+                renderProjectDetail(slug);
+                window.scrollTo({ top: 0 });
+            } else if (hash === '#/proyek') {
+                homeEl.classList.add('hidden'); footerEl.classList.add('hidden');
+                detailEl.classList.add('hidden'); listEl.classList.remove('hidden');
+                syncAllViews();
+                window.scrollTo({ top: 0 });
+            } else {
+                listEl.classList.add('hidden'); detailEl.classList.add('hidden');
+                homeEl.classList.remove('hidden'); footerEl.classList.remove('hidden');
+                if (hash && hash.length > 1 && !hash.startsWith('#/')) {
+                    const target = document.querySelector(hash);
+                    if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+                }
+            }
+        }
+
+        // ---------- Login admin via Firebase Authentication (bukan lagi kredensial statis) ----------
+        // Batas percobaan login untuk memperlambat brute-force sederhana di sisi klien.
+        // (Firebase juga menerapkan rate-limiting-nya sendiri di sisi server untuk percobaan login yang gagal.)
+        let loginAttempts = 0;
+        let loginLockedUntil = 0;
+        let currentAdminUser = null;
+
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+            firebase.auth().onAuthStateChanged((user) => {
+                currentAdminUser = user;
+                if (!user) closeAdminDashboard();
+            });
+        }
+
+        document.getElementById('adminFormLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('loginSubmitBtn');
+            const errEl = document.getElementById('loginError');
+
+            if (Date.now() < loginLockedUntil) {
+                const wait = Math.ceil((loginLockedUntil - Date.now()) / 1000);
+                errEl.innerText = `Terlalu banyak percobaan. Coba lagi dalam ${wait} detik.`;
+                errEl.classList.remove('hidden');
+                return;
+            }
+
             btn.innerText = "Memeriksa..."; btn.disabled = true;
+            errEl.classList.add('hidden');
+            const email = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value;
 
-            const cleanUser = document.getElementById('adminUser').value.replace(/\s+/g, '').toLowerCase();
-            const cleanPass = document.getElementById('adminPass').value.replace(/\s+/g, '');
-            
-            const vU = String.fromCharCode(97, 100, 109, 105, 110);
-            const vP = String.fromCharCode(99, 111, 100, 101, 97, 100, 109, 105, 110);
-
-            if (cleanUser === vU && cleanPass === vP) {
-                sessionStorage.setItem('azim_is_admin', 'true');
+            try {
+                await firebase.auth().signInWithEmailAndPassword(email, pass);
+                loginAttempts = 0;
                 closeLoginModal(); showToast('✓ Akses Diberikan'); e.target.reset(); openAdminDashboard();
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
+            } catch (err) {
+                loginAttempts++;
+                errEl.innerText = 'Kredensial ditolak!';
+                errEl.classList.remove('hidden');
+                if (loginAttempts >= 5) {
+                    loginLockedUntil = Date.now() + 30000;
+                    loginAttempts = 0;
+                    errEl.innerText = 'Terlalu banyak percobaan. Coba lagi dalam 30 detik.';
+                }
             }
             btn.innerText = "Verifikasi"; btn.disabled = false;
         });
 
-        function handleLockIconClick() { if (sessionStorage.getItem('azim_is_admin') === 'true') { openAdminDashboard(); } else { document.getElementById('adminLoginModal').classList.remove('hidden'); } }
+        function handleLockIconClick() { if (currentAdminUser) { openAdminDashboard(); } else { document.getElementById('adminLoginModal').classList.remove('hidden'); document.getElementById('adminUser').focus(); } }
         function closeLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); document.getElementById('loginError').classList.add('hidden'); }
-        function handleAdminLogout() { sessionStorage.removeItem('azim_is_admin'); closeAdminDashboard(); showToast('Sesi berakhir.'); }
+        function handleAdminLogout() { firebase.auth().signOut(); closeAdminDashboard(); showToast('Sesi berakhir.'); }
         function openAdminDashboard() { document.getElementById('adminDashboard').classList.remove('hidden'); document.getElementById('adminDashboard').classList.add('flex'); document.body.style.overflow = 'hidden'; switchAdminTab('tabAnalitik'); }
         function closeAdminDashboard() { document.getElementById('adminDashboard').classList.add('hidden'); document.getElementById('adminDashboard').classList.remove('flex'); document.body.style.overflow = 'auto'; }
-        
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (!document.getElementById('adminLoginModal').classList.contains('hidden')) closeLoginModal();
+                if (!document.getElementById('adminDashboard').classList.contains('hidden')) closeAdminDashboard();
+            }
+        });
+
         function switchAdminTab(tabId) {
             document.querySelectorAll('.admin-tab-content').forEach(el => { el.classList.remove('block'); el.classList.add('hidden'); });
             document.querySelectorAll('.admin-tab-btn').forEach(btn => { btn.className = "admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold transition-colors"; });
@@ -530,14 +874,19 @@
 
         document.getElementById('themeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
         const mobileMenuBtn = document.getElementById('mobileMenuBtn'); const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden')); document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => mobileMenu.classList.add('hidden')); });
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', () => mobileMenu.classList.add('hidden')); });
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.classList.contains('hidden') && !mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
         function salinEmailAzim() {
             const email = DATA_PORTOFOLIO.profil.email;
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(email).then(() => showToast('✓ Email disalin!')).catch(() => fallbackCopy(email));
-            } else {
-                fallbackCopy(email);
-            }
+            } else { fallbackCopy(email); }
         }
         function fallbackCopy(text) {
             const dummy = document.createElement('textarea');
@@ -548,24 +897,55 @@
             document.body.removeChild(dummy);
         }
         function showToast(msg) { const toast = document.getElementById('toast'); document.getElementById('toastText').innerText = msg; toast.classList.remove('translate-y-20', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-20', 'opacity-0'); }, 2500); }
+
+        function validateField(id, condition, message) {
+            const input = document.getElementById(id);
+            const errorEl = input.parentElement.querySelector('.field-error');
+            if (!condition) { errorEl.innerText = message; errorEl.classList.remove('hidden'); input.classList.add('border-rose-500'); return false; }
+            errorEl.classList.add('hidden'); input.classList.remove('border-rose-500');
+            return true;
+        }
+
         async function handleFormSubmit(e) {
             e.preventDefault();
             const form = e.target;
+
+            // Honeypot anti-bot: jika field tersembunyi ini terisi, kemungkinan besar itu bot.
+            const honey = form.querySelector('[name="_honey"]');
+            if (honey && honey.value.trim() !== '') { showToast('✗ Pesan tidak dapat dikirim.'); return; }
+
+            // Rate limit sederhana: cegah kirim berulang dalam 20 detik.
+            const now = Date.now();
+            if (now - lastContactSubmit < 20000) {
+                showToast('Mohon tunggu sebentar sebelum mengirim lagi.');
+                return;
+            }
+
+            const nameVal = document.getElementById('fName').value.trim();
+            const emailVal = document.getElementById('fEmail').value.trim();
+            const msgVal = document.getElementById('fMessage').value.trim();
+            const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+
+            const validName = validateField('fName', nameVal.length >= 2 && nameVal.length <= 100, 'Nama minimal 2 karakter.');
+            const validEmail = validateField('fEmail', emailOk, 'Masukkan alamat email yang valid.');
+            const validMsg = validateField('fMessage', msgVal.length >= 10 && msgVal.length <= 2000, 'Pesan minimal 10 karakter.');
+            if (!validName || !validEmail || !validMsg) return;
+
             const btn = document.getElementById('submitBtn');
             btn.innerText = 'Mengirimkan...'; btn.disabled = true;
 
             const formData = new FormData(form);
-            formData.append('_subject', `Pesan Baru dari Portofolio — ${formData.get('name')}`);
+            formData.delete('_honey');
+            formData.append('_subject', `Pesan Baru dari Portofolio — ${nameVal}`);
             formData.append('_captcha', 'false');
             formData.append('_template', 'table');
 
             try {
                 const res = await fetch(`https://formsubmit.co/ajax/${DATA_PORTOFOLIO.profil.email}`, {
-                    method: 'POST',
-                    headers: { 'Accept': 'application/json' },
-                    body: formData
+                    method: 'POST', headers: { 'Accept': 'application/json' }, body: formData
                 });
                 if (!res.ok) throw new Error('Gagal mengirim pesan');
+                lastContactSubmit = now;
                 document.getElementById('formSuccess').classList.remove('hidden');
                 form.reset();
             } catch (err) {
@@ -573,6 +953,44 @@
                 showToast('✗ Gagal mengirim pesan, coba lagi.');
             }
             btn.innerText = 'Kirimkan Pesan'; btn.disabled = false;
+        }
+
+        function initScrollFeatures() {
+            const progressBar = document.getElementById('scrollProgress');
+            const backToTop = document.getElementById('backToTop');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = Array.from(document.querySelectorAll('#mainHome section[id]'));
+
+            function onScroll() {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                progressBar.style.width = pct + '%';
+
+                backToTop.classList.toggle('hidden', scrollTop < 400);
+                backToTop.classList.toggle('flex', scrollTop >= 400);
+
+                if (document.getElementById('mainHome').classList.contains('hidden')) return;
+                let currentId = null;
+                for (const sec of sections) {
+                    const rect = sec.getBoundingClientRect();
+                    if (rect.top <= 120 && rect.bottom > 120) { currentId = sec.id; break; }
+                }
+                navLinks.forEach(link => link.classList.toggle('active', link.dataset.section === currentId));
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+            backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+            if ('IntersectionObserver' in window) {
+                const io = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('in-view'); io.unobserve(entry.target); } });
+                }, { threshold: 0.12 });
+                document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+            } else {
+                document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+            }
         }
     </script>
 </body>
