@@ -54,12 +54,28 @@
         #heroSpotlight { position: absolute; inset: 0; pointer-events: none; border-radius: 1rem; opacity: 0; transition: opacity 0.3s ease;
             background: radial-gradient(500px circle at var(--x, 50%) var(--y, 50%), rgba(14,165,233,0.08), transparent 60%); }
         #hero { position: relative; }
+        #heroBgBlobs { position: absolute; inset: 0; overflow: hidden; z-index: -1; border-radius: 1.5rem; }
+        #heroBgBlobs span { position: absolute; border-radius: 9999px; filter: blur(60px); opacity: 0.22; }
+        #heroBgBlobs span:nth-child(1) { width: 280px; height: 280px; background: #0ea5e9; top: -90px; left: -60px; animation: floatBlob1 14s ease-in-out infinite; }
+        #heroBgBlobs span:nth-child(2) { width: 220px; height: 220px; background: #10b981; bottom: -70px; right: -40px; animation: floatBlob2 16s ease-in-out infinite; }
+        @keyframes floatBlob1 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(30px, 24px); } }
+        @keyframes floatBlob2 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-26px, -18px); } }
+        @media (prefers-reduced-motion: reduce) { #heroBgBlobs span { animation: none; } }
         @media (pointer: fine) { #hero:hover #heroSpotlight { opacity: 1; } }
 
         /* Kursor berkedip untuk efek typewriter */
         #heroTypeCursor { display: inline-block; width: 2px; height: 1em; vertical-align: text-bottom; background: currentColor; margin-left: 2px; animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
         @media (prefers-reduced-motion: reduce) { #heroTypeCursor { animation: none; } }
+
+        /* Command palette (Ctrl+K) */
+        #cmdPaletteOverlay { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); display: none; align-items: flex-start; justify-content: center; padding: 12vh 1rem 1rem; }
+        #cmdPaletteOverlay.open { display: flex; }
+        .cmd-item.active { background: #0ea5e9; color: white; }
+        .cmd-item.active .cmd-hint { color: rgba(255,255,255,0.7) !important; }
+
+        /* Confetti canvas untuk easter egg */
+        #confettiCanvas { position: fixed; inset: 0; z-index: 95; pointer-events: none; }
 
         /* Tampilan cetak/PDF: ringkas, tanpa nav/tombol/admin, hitam-putih */
         @media print {
@@ -118,6 +134,7 @@
     <!-- ======================= HALAMAN BERANDA ======================= -->
     <main id="mainHome" class="max-w-4xl mx-auto px-6 py-12 sm:py-20 space-y-20">
         <section id="hero" class="space-y-6">
+            <div id="heroBgBlobs" aria-hidden="true"><span></span><span></span></div>
             <div id="heroSpotlight"></div>
             <div id="heroBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono border border-emerald-500/20">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -191,6 +208,7 @@
                     <div class="flex flex-wrap gap-2 pt-2 no-print">
                         <button onclick="downloadVCard()" class="px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-1.5">📇 Simpan Kontak</button>
                         <button onclick="window.print()" class="px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-1.5">🖨️ Cetak / Simpan PDF</button>
+                        <button onclick="sharePortfolio()" class="px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-1.5">🔗 Bagikan Portofolio</button>
                     </div>
                 </div>
                 <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative">
@@ -487,6 +505,18 @@
             </div>
         </div>
     </div>
+
+    <!-- Command Palette (Ctrl+K / Cmd+K) -->
+    <div id="cmdPaletteOverlay" onclick="if(event.target===this) closeCmdPalette()">
+        <div class="w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
+            <input id="cmdPaletteInput" type="text" placeholder="Ketik perintah atau tujuan... (mis. proyek, github, kontak)" class="w-full px-4 py-3.5 text-sm bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:outline-none" autocomplete="off">
+            <div id="cmdPaletteResults" class="max-h-80 overflow-y-auto text-sm"></div>
+            <div class="px-4 py-2 text-[10px] font-mono text-zinc-400 border-t border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
+                <span>↑↓ navigasi</span><span>↵ pilih</span><span>esc tutup</span>
+            </div>
+        </div>
+    </div>
+    <canvas id="confettiCanvas" class="hidden"></canvas>
 
     <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none z-[80]">
         <div id="toastText" class="bg-zinc-900 dark:bg-white text-zinc-100 dark:text-zinc-900 px-4 py-2.5 rounded-xl text-xs font-mono font-semibold shadow-xl border border-zinc-800 dark:border-zinc-200">Notifikasi</div>
@@ -842,10 +872,11 @@
 
             document.getElementById('statsContainer').innerHTML = sc.statistik.map(s => `
                 <div class="space-y-0.5">
-                    <div class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">${escapeHtml(s.nilai)}</div>
+                    <div class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50 stat-value" data-full="${escapeHtml(s.nilai)}">0</div>
                     <div class="text-[11px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400">${escapeHtml(s.label)}</div>
                 </div>
             `).join('');
+            initStatsCountUp();
 
             document.getElementById('principlesContainer').innerHTML = sc.prinsip.map(p => `
                 <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-1.5">
@@ -855,24 +886,29 @@
             `).join('');
 
             document.getElementById('skillsContainer').innerHTML = sc.keahlian.map(k => `
-                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3">
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3 hover:border-sky-500/40 transition-colors">
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full ${escapeHtml(k.warnaDot || 'bg-cyan-500')}"></span>
                         <span class="font-semibold text-zinc-900 dark:text-zinc-100">${escapeHtml(k.kategori)}</span>
                     </div>
-                    <ul class="space-y-1.5 text-zinc-500 dark:text-zinc-400">${(k.item || []).map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+                    <div class="flex flex-wrap gap-1.5">${(k.item || []).map(i => `<span class="px-2 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[11px] font-mono">${escapeHtml(i)}</span>`).join('')}</div>
                 </div>
             `).join('');
 
-            document.getElementById('experienceContainer').innerHTML = sc.pengalaman.map(e => `
-                <div class="space-y-2">
-                    <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                        <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${escapeHtml(e.posisi)} · <span class="font-normal text-zinc-500 dark:text-zinc-400">${escapeHtml(e.perusahaan)}</span></h3>
-                        <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${escapeHtml(e.periode)}</span>
-                    </div>
-                    <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">${(e.poin || []).map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}</ul>
-                </div>
-            `).join('');
+            const TIMELINE_COLORS = ['bg-sky-500', 'bg-emerald-500', 'bg-amber-500', 'bg-violet-500', 'bg-rose-500'];
+            document.getElementById('experienceContainer').innerHTML = `
+                <div class="relative pl-6 border-l-2 border-zinc-200 dark:border-zinc-800 space-y-8">
+                    ${sc.pengalaman.map((e, idx) => `
+                        <div class="relative space-y-2">
+                            <span class="absolute left-[-1.8rem] top-1 w-3 h-3 rounded-full ${TIMELINE_COLORS[idx % TIMELINE_COLORS.length]} ring-4 ring-zinc-50 dark:ring-zinc-950"></span>
+                            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                                <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${escapeHtml(e.posisi)} · <span class="font-normal text-zinc-500 dark:text-zinc-400">${escapeHtml(e.perusahaan)}</span></h3>
+                                <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${escapeHtml(e.periode)}</span>
+                            </div>
+                            <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">${(e.poin || []).map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}</ul>
+                        </div>
+                    `).join('')}
+                </div>`;
 
             startHeroTypewriter(sc);
         }
@@ -881,6 +917,37 @@
         // Otomatis mengambil peran utama + nama-nama kategori keahlian sebagai variasi teks,
         // jadi ikut berubah kalau admin mengedit Profil/Keahlian — tidak perlu data terpisah.
         let heroTypewriterTimer = null;
+        // ---------- Fitur: animasi hitung naik untuk angka statistik saat discroll ke tampilan ----------
+        function initStatsCountUp() {
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            document.querySelectorAll('.stat-value').forEach(el => {
+                const full = el.dataset.full || '';
+                const match = full.match(/\d+(\.\d+)?/);
+                if (!match || reduceMotion) { el.textContent = full; return; }
+                const target = parseFloat(match[0]);
+                const decimals = (match[0].split('.')[1] || '').length;
+                const prefix = full.slice(0, match.index);
+                const suffix = full.slice(match.index + match[0].length);
+                el.textContent = prefix + (0).toFixed(decimals) + suffix;
+                if (!('IntersectionObserver' in window)) { el.textContent = full; return; }
+                const io = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+                        io.unobserve(el);
+                        const duration = 1200; const start = performance.now();
+                        function frame(now) {
+                            const progress = Math.min((now - start) / duration, 1);
+                            const eased = 1 - Math.pow(1 - progress, 3);
+                            el.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
+                            if (progress < 1) requestAnimationFrame(frame);
+                        }
+                        requestAnimationFrame(frame);
+                    });
+                }, { threshold: 0.4 });
+                io.observe(el);
+            });
+        }
+
         function startHeroTypewriter(sc) {
             clearTimeout(heroTypewriterTimer);
             const el = document.getElementById('heroRole');
@@ -961,13 +1028,20 @@
             } catch (e) { console.warn('Penghitung pengunjung tidak aktif (opsional):', e); }
         }
 
+        function hashAccentColor(str) {
+            const colors = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#06b6d4', '#ec4899'];
+            let sum = 0; for (let i = 0; i < str.length; i++) sum += str.charCodeAt(i);
+            return colors[sum % colors.length];
+        }
+
         function projectCardHtml(proj, opts) {
             opts = opts || {};
             const link = opts.internalLink ? ('#/proyek/' + encodeURIComponent(proj._slug)) : safeUrl(proj.linkTautan);
             const target = opts.internalLink ? '' : 'target="_blank" rel="noopener noreferrer"';
+            const accent = hashAccentColor(proj.judul || 'x');
             return `
-                <a href="${link}" ${target} class="block p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 hover:border-sky-500/50 transition-colors">
-                    <div class="flex justify-between gap-2"><div><h3 class="font-semibold text-sm">${escapeHtml(proj.judul)}</h3><p class="text-xs font-mono text-zinc-400">${escapeHtml(proj.subjudul)}</p></div><span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 whitespace-nowrap">${escapeHtml(proj.status)}</span></div>
+                <a href="${link}" ${target} class="block p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 hover:border-sky-500/50 hover:-translate-y-0.5 hover:shadow-md transition-all">
+                    <div class="flex justify-between gap-2"><div><h3 class="font-semibold text-sm flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm flex-shrink-0" style="background:${accent}"></span>${escapeHtml(proj.judul)}</h3><p class="text-xs font-mono text-zinc-400 pl-[18px]">${escapeHtml(proj.subjudul)}</p></div><span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 whitespace-nowrap">${escapeHtml(proj.status)}</span></div>
                     <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-3">${escapeHtml(proj.deskripsi)}</p>
                     <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-xs font-mono mt-3">
                         <div class="flex gap-2 text-zinc-400">${(proj.tags || []).map((t, idx) => `<span>${escapeHtml(t)}</span>${idx < proj.tags.length - 1 ? '<span>•</span>' : ''}`).join('')}</div>
@@ -993,12 +1067,18 @@
 
         function setTagFilter(tag) { activeTagFilter = tag; syncAllViews(); }
 
+        function estimateReadingTime(text) {
+            const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
+            return Math.max(1, Math.round(words / 130)); // ~130 kata/menit asumsi ringkasan singkat
+        }
+
         function syncAllViews() {
             const allArticles = [...cloudArticles, ...DATA_PORTOFOLIO.artikelDefault];
             document.getElementById('publicArticlesContainer').innerHTML = allArticles.map(art => `
                 <a href="${escapeHtml(safeUrl(art.linkTautan))}" class="block p-4 -mx-4 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900/60 transition-colors group">
                     <div class="flex items-baseline justify-between gap-4"><h3 class="font-medium text-sm group-hover:underline">${escapeHtml(art.judul)}</h3><span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${escapeHtml(art.tahun)}</span></div>
                     <p class="text-xs text-zinc-500 mt-1">${escapeHtml(art.deskripsi)}</p>
+                    <p class="text-[10px] font-mono text-zinc-400 mt-1.5">⏱ ${estimateReadingTime(art.deskripsi)} menit baca</p>
                 </a>
             `).join('');
 
@@ -1197,7 +1277,8 @@
 
         // ---------- Sub-halaman GitHub: ambil repositori publik lewat GitHub REST API ----------
         const GITHUB_USERNAME = 'ziimch';
-        const GH_CACHE_KEY = 'azim_gh_repos_cache_v1';
+        const GH_HIDDEN_REPOS = ['ziimch.github.io']; // repo yang sengaja disembunyikan dari daftar publik (huruf kecil-besar diabaikan)
+        const GH_CACHE_KEY = 'azim_gh_repos_cache_v2'; // versi dinaikkan supaya cache lama (sebelum ada filter repo tersembunyi) tidak kepakai
         const GH_CACHE_TTL_MS = 10 * 60 * 1000; // 10 menit, biar hemat rate-limit API GitHub (60 req/jam tanpa token)
 
         function formatRelativeDate(dateStr) {
@@ -1244,7 +1325,7 @@
                 if (res.status === 403) throw new Error('Batas permintaan GitHub API tercapai. Coba lagi dalam beberapa menit.');
                 if (!res.ok) throw new Error('GitHub API merespon status ' + res.status);
                 const data = await res.json();
-                ghReposCache = data.filter(r => !r.fork).map(r => ({
+                ghReposCache = data.filter(r => !r.fork && !GH_HIDDEN_REPOS.some(h => h.toLowerCase() === r.name.toLowerCase())).map(r => ({
                     name: r.name, description: r.description, url: r.html_url,
                     language: r.language, stars: r.stargazers_count, forks: r.forks_count,
                     updatedAt: r.pushed_at, topics: r.topics || [], homepage: r.homepage
@@ -1401,6 +1482,7 @@
             if (e.key === 'Escape') {
                 if (!document.getElementById('adminLoginModal').classList.contains('hidden')) closeLoginModal();
                 if (!document.getElementById('adminDashboard').classList.contains('hidden')) closeAdminDashboard();
+                if (document.getElementById('cmdPaletteOverlay').classList.contains('open')) closeCmdPalette();
             }
         });
 
@@ -1650,6 +1732,171 @@
                 showToast('✗ Gagal mengirim pesan, coba lagi.');
             }
             btn.innerText = 'Kirimkan Pesan'; btn.disabled = false;
+        }
+
+        // =====================================================================
+        // FITUR: Command Palette (Ctrl+K / Cmd+K, atau tombol "k")
+        // =====================================================================
+        const CMD_LIST = [
+            { label: '🏠 Ke Beranda', hint: 'Home', action: () => go('#hero') },
+            { label: '👤 Tentang Saya', hint: 'Section', action: () => go('#tentang') },
+            { label: '🛠 Keahlian', hint: 'Section', action: () => go('#keahlian') },
+            { label: '💼 Pengalaman', hint: 'Section', action: () => go('#pengalaman') },
+            { label: '🚀 Semua Proyek', hint: 'Halaman', action: () => go('#/proyek') },
+            { label: '📦 Repositori GitHub', hint: 'Halaman', action: () => go('#/github') },
+            { label: '📝 Artikel & Riset', hint: 'Section', action: () => go('#artikel') },
+            { label: '💬 Testimoni', hint: 'Section', action: () => go('#testimoni') },
+            { label: '✉️ Kontak', hint: 'Section', action: () => go('#kontak') },
+            { label: '📇 Unduh Kartu Kontak (vCard)', hint: 'Aksi', action: () => downloadVCard() },
+            { label: '🖨️ Cetak / Simpan sebagai PDF', hint: 'Aksi', action: () => window.print() },
+            { label: '🔗 Bagikan Portofolio', hint: 'Aksi', action: () => sharePortfolio() },
+            { label: '📋 Salin Email', hint: 'Aksi', action: () => salinEmailAzim() },
+            { label: '🌗 Ganti Tema Terang/Gelap', hint: 'Aksi', action: () => document.getElementById('themeToggle').click() }
+        ];
+        let cmdActiveIndex = 0;
+
+        function go(hash) { window.location.hash = hash; closeCmdPalette(); }
+
+        function openCmdPalette() {
+            const overlay = document.getElementById('cmdPaletteOverlay');
+            overlay.classList.add('open');
+            const input = document.getElementById('cmdPaletteInput');
+            input.value = ''; cmdActiveIndex = 0;
+            renderCmdResults('');
+            setTimeout(() => input.focus(), 10);
+        }
+        function closeCmdPalette() { document.getElementById('cmdPaletteOverlay').classList.remove('open'); }
+
+        function renderCmdResults(query) {
+            const q = query.trim().toLowerCase();
+            const filtered = CMD_LIST.filter(c => c.label.toLowerCase().includes(q) || c.hint.toLowerCase().includes(q));
+            cmdActiveIndex = 0;
+            const container = document.getElementById('cmdPaletteResults');
+            if (filtered.length === 0) { container.innerHTML = '<p class="px-4 py-6 text-center text-xs font-mono text-zinc-400">Tidak ada hasil.</p>'; return; }
+            container.innerHTML = filtered.map((c, i) => `
+                <button type="button" data-idx="${i}" onclick='CMD_LIST_RUNNER(${JSON.stringify(c.label)})' class="cmd-item ${i === 0 ? 'active' : ''} w-full text-left px-4 py-2.5 flex items-center justify-between hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    <span>${escapeHtml(c.label)}</span><span class="cmd-hint text-[10px] font-mono text-zinc-400">${escapeHtml(c.hint)}</span>
+                </button>
+            `).join('');
+            container._filtered = filtered;
+        }
+        function CMD_LIST_RUNNER(label) {
+            const cmd = CMD_LIST.find(c => c.label === label);
+            if (cmd) cmd.action();
+        }
+
+        document.getElementById('cmdPaletteInput').addEventListener('input', (e) => renderCmdResults(e.target.value));
+        document.getElementById('cmdPaletteInput').addEventListener('keydown', (e) => {
+            const container = document.getElementById('cmdPaletteResults');
+            const items = container._filtered || [];
+            if (e.key === 'ArrowDown') { e.preventDefault(); cmdActiveIndex = Math.min(cmdActiveIndex + 1, items.length - 1); updateCmdActive(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); cmdActiveIndex = Math.max(cmdActiveIndex - 1, 0); updateCmdActive(); }
+            else if (e.key === 'Enter') { e.preventDefault(); if (items[cmdActiveIndex]) items[cmdActiveIndex].action(); }
+            else if (e.key === 'Escape') { closeCmdPalette(); }
+        });
+        function updateCmdActive() {
+            document.querySelectorAll('.cmd-item').forEach((el, i) => el.classList.toggle('active', i === cmdActiveIndex));
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openCmdPalette(); }
+            else if (e.key.toLowerCase() === 'k' && !isTyping) { e.preventDefault(); openCmdPalette(); }
+        });
+
+        function sharePortfolio() {
+            const url = window.location.origin + window.location.pathname;
+            const shareData = { title: document.title, text: 'Lihat portofolio ini:', url };
+            if (navigator.share) {
+                navigator.share(shareData).catch(() => {});
+            } else if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(() => showToast('✓ Tautan portofolio disalin!'));
+            } else {
+                showToast('Salin manual: ' + url);
+            }
+        }
+
+        // =====================================================================
+        // EASTER EGGS 🥚 — jangan diambil terlalu serius, cuma buat seru-seruan
+        // =====================================================================
+
+        // 1) Pesan rahasia di console untuk yang suka buka DevTools.
+        (function consoleEasterEgg() {
+            const style1 = 'font-size:18px; font-weight:bold; color:#0ea5e9;';
+            const style2 = 'font-size:12px; color:#71717a;';
+            console.log('%c👋 Halo, sesama developer!', style1);
+            console.log('%cKalau kamu lagi ngintip kode di sini, sepertinya kita cocok ngobrol soal engineering. Cek juga #/github buat lihat repo, atau ketik "azim" di mana saja pada halaman ini untuk kejutan kecil 😉', style2);
+        })();
+
+        // 2) Ketik kata "azim" di mana saja pada halaman → confetti kecil.
+        (function typedWordEasterEgg() {
+            let buffer = '';
+            document.addEventListener('keydown', (e) => {
+                if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+                if (e.key.length !== 1) return;
+                buffer = (buffer + e.key.toLowerCase()).slice(-4);
+                if (buffer === 'azim') { fireConfetti(); showToast('✨ Easter egg ditemukan!'); }
+            });
+        })();
+
+        // 3) Kode Konami (↑↑↓↓←→←→BA) → confetti besar.
+        (function konamiEasterEgg() {
+            const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+            let pos = 0;
+            document.addEventListener('keydown', (e) => {
+                const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+                pos = (key === seq[pos]) ? pos + 1 : (key === seq[0] ? 1 : 0);
+                if (pos === seq.length) { pos = 0; fireConfetti(2200); showToast('🎮 Konami Code! Kamu memang niat ya.'); }
+            });
+        })();
+
+        // 4) Ketuk foto profil 5x → animasi jenaka (fotonya kucing bernama "Bakekoke" 🐱).
+        (function avatarEasterEgg() {
+            let taps = 0; let timer = null;
+            const avatar = document.getElementById('heroAvatar');
+            if (!avatar) return;
+            avatar.style.cursor = 'pointer';
+            avatar.addEventListener('click', () => {
+                taps++; clearTimeout(timer); timer = setTimeout(() => taps = 0, 1500);
+                avatar.style.transition = 'transform 0.4s ease';
+                avatar.style.transform = `rotate(${taps * 72}deg)`;
+                if (taps >= 5) {
+                    taps = 0;
+                    avatar.style.transform = 'rotate(360deg) scale(1.1)';
+                    setTimeout(() => { avatar.style.transform = ''; }, 400);
+                    showToast('🐱 Meong! (iya, itu foto kucing)');
+                    fireConfetti(1200);
+                }
+            });
+        })();
+
+        // Confetti ringan pakai Canvas — tanpa library eksternal.
+        function fireConfetti(duration) {
+            duration = duration || 1500;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const canvas = document.getElementById('confettiCanvas');
+            canvas.classList.remove('hidden');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const ctx = canvas.getContext('2d');
+            const colors = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6'];
+            const pieces = Array.from({ length: 120 }, () => ({
+                x: Math.random() * canvas.width, y: -20 - Math.random() * canvas.height * 0.5,
+                r: 4 + Math.random() * 5, c: colors[Math.floor(Math.random() * colors.length)],
+                vy: 2 + Math.random() * 3, vx: -2 + Math.random() * 4, rot: Math.random() * 360, vr: -6 + Math.random() * 12
+            }));
+            const start = performance.now();
+            function frame(now) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+                    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.c; ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.6);
+                    ctx.restore();
+                });
+                if (now - start < duration) requestAnimationFrame(frame);
+                else { ctx.clearRect(0, 0, canvas.width, canvas.height); canvas.classList.add('hidden'); }
+            }
+            requestAnimationFrame(frame);
         }
 
         function initScrollFeatures() {
