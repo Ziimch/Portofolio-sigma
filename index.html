@@ -301,6 +301,7 @@
                     <button onclick="switchAdminTab('tabAnalitik')" id="btnTabAnalitik" class="admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono text-xs font-semibold">📊 Analitik</button>
                     <button onclick="switchAdminTab('tabArtikel')" id="btnTabArtikel" class="admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold">📝 Kelola Artikel</button>
                     <button onclick="switchAdminTab('tabProyek')" id="btnTabProyek" class="admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold">🚀 Kelola Proyek</button>
+                    <button onclick="switchAdminTab('tabProfil')" id="btnTabProfil" class="admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold">🧑 Profil & Konten</button>
                 </nav>
             </div>
             <div class="space-y-2 mt-8 md:mt-0">
@@ -373,6 +374,91 @@
                     <div id="adminProjectList" class="space-y-3"><div class="animate-pulse text-xs text-zinc-500 font-mono">Memuat database...</div></div>
                 </div>
             </div>
+
+            <div id="tabProfil" class="admin-tab-content hidden max-w-3xl mx-auto space-y-8 pb-20">
+                <div>
+                    <h1 class="text-2xl font-bold">Profil & Konten Halaman</h1>
+                    <p class="text-xs font-mono text-zinc-500">Semua bagian ini tersimpan ke Firestore (koleksi <code>site_content</code>) dan langsung tampil di halaman publik.</p>
+                </div>
+
+                <!-- Profil Utama -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-3 text-xs">
+                    <h3 class="font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 pb-2">👤 Profil Utama</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><label class="text-[10px] font-mono text-zinc-400">Nama</label><input type="text" id="adm_nama" oninput="draftProfil.nama=this.value" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></div>
+                        <div><label class="text-[10px] font-mono text-zinc-400">Peran / Jabatan</label><input type="text" id="adm_peran" oninput="draftProfil.peran=this.value" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></div>
+                    </div>
+                    <div><label class="text-[10px] font-mono text-zinc-400">Badge Status (mis. "Tersedia untuk Pekerjaan Full-Time")</label><input type="text" id="adm_statusBadge" oninput="draftProfil.statusBadge=this.value" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></div>
+                    <div><label class="text-[10px] font-mono text-zinc-400">Bio Singkat (di bawah nama)</label><textarea id="adm_ringkasan" rows="2" oninput="draftProfil.ringkasan=this.value" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea></div>
+                    <div><label class="text-[10px] font-mono text-zinc-400">Detail "Tentang Saya"</label><textarea id="adm_tentangDetail" rows="2" oninput="draftProfil.tentangDetail=this.value" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></textarea></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><label class="text-[10px] font-mono text-zinc-400">Email Kontak</label><input type="email" id="adm_email" oninput="draftProfil.email=this.value" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></div>
+                        <div><label class="text-[10px] font-mono text-zinc-400">Teks Copyright Footer</label><input type="text" id="adm_copyright" oninput="draftProfil.copyright=this.value" class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none"></div>
+                    </div>
+                    <p class="text-[10px] text-zinc-400">Catatan: foto profil masih diatur lewat nama file gambar di kode (tidak ada upload gambar di panel ini).</p>
+                    <button type="button" id="btnSaveProfil" onclick="saveProfil()" class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-semibold transition-colors">💾 Simpan Profil</button>
+                </div>
+
+                <!-- Statistik -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-3">
+                    <h3 class="font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 pb-2">📈 Statistik (4 angka di bawah hero)</h3>
+                    <div id="editor_statistik" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="addRepeaterItem('statistik')" class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono">+ Tambah</button>
+                        <button type="button" id="btnSave_statistik" onclick="saveRepeaterSection('statistik')" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-mono font-semibold">💾 Simpan Statistik</button>
+                    </div>
+                </div>
+
+                <!-- Prinsip -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-3">
+                    <h3 class="font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 pb-2">💡 Prinsip Kerja</h3>
+                    <div id="editor_prinsip" class="space-y-3"></div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="addRepeaterItem('prinsip')" class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono">+ Tambah</button>
+                        <button type="button" id="btnSave_prinsip" onclick="saveRepeaterSection('prinsip')" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-mono font-semibold">💾 Simpan Prinsip</button>
+                    </div>
+                </div>
+
+                <!-- Keahlian -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-3">
+                    <h3 class="font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 pb-2">🛠 Matriks Keahlian</h3>
+                    <div id="editor_keahlian" class="space-y-3"></div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="addRepeaterItem('keahlian')" class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono">+ Tambah Kategori</button>
+                        <button type="button" id="btnSave_keahlian" onclick="saveRepeaterSection('keahlian')" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-mono font-semibold">💾 Simpan Keahlian</button>
+                    </div>
+                </div>
+
+                <!-- Pengalaman -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-3">
+                    <h3 class="font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 pb-2">💼 Pengalaman Kerja</h3>
+                    <div id="editor_pengalaman" class="space-y-3"></div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="addRepeaterItem('pengalaman')" class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono">+ Tambah Pengalaman</button>
+                        <button type="button" id="btnSave_pengalaman" onclick="saveRepeaterSection('pengalaman')" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-mono font-semibold">💾 Simpan Pengalaman</button>
+                    </div>
+                </div>
+
+                <!-- Testimoni -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-3">
+                    <h3 class="font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 pb-2">💬 Testimoni</h3>
+                    <div id="editor_testimoni" class="space-y-3"></div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="addRepeaterItem('testimoni')" class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono">+ Tambah Testimoni</button>
+                        <button type="button" id="btnSave_testimoni" onclick="saveRepeaterSection('testimoni')" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-mono font-semibold">💾 Simpan Testimoni</button>
+                    </div>
+                </div>
+
+                <!-- Sosial -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-3">
+                    <h3 class="font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 pb-2">🔗 Tautan Sosial Media</h3>
+                    <div id="editor_sosial" class="space-y-3"></div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="addRepeaterItem('sosial')" class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-mono">+ Tambah Tautan</button>
+                        <button type="button" id="btnSave_sosial" onclick="saveRepeaterSection('sosial')" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-mono font-semibold">💾 Simpan Sosial</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -411,6 +497,10 @@
         let db = null;
         let cloudArticles = [];
         let cloudProjects = [];
+        let cloudSiteContent = null; // dari Firestore site_content/main; null = pakai default DATA_PORTOFOLIO
+        let drafts = { statistik: [], prinsip: [], keahlian: [], pengalaman: [], testimoni: [], sosial: [] };
+        let draftProfil = {};
+        let profilDraftsInitialized = false;
         let activeTagFilter = 'Semua';
         let activeSearch = '';
         let lastContactSubmit = 0;
@@ -495,9 +585,37 @@
             return err.message || ('Gagal: ' + code);
         }
 
+        // ---------- Konten situs yang bisa diedit dari panel admin ----------
+        // Gabungkan data dari Firestore (site_content/main) di atas default DATA_PORTOFOLIO.
+        // Kalau field tertentu belum pernah disimpan ke cloud, otomatis jatuh ke default —
+        // jadi halaman TIDAK PERNAH kosong/rusak walau admin baru pertama kali buka panel ini.
+        function getSiteContent() {
+            const d = DATA_PORTOFOLIO;
+            const c = cloudSiteContent || {};
+            return {
+                profil: { ...d.profil, ...(c.profil || {}) },
+                statistik: (c.statistik && c.statistik.length) ? c.statistik : d.statistik,
+                prinsip: (c.prinsip && c.prinsip.length) ? c.prinsip : d.prinsip,
+                keahlian: (c.keahlian && c.keahlian.length) ? c.keahlian : d.keahlian,
+                pengalaman: (c.pengalaman && c.pengalaman.length) ? c.pengalaman : d.pengalaman,
+                testimoni: (c.testimoni && c.testimoni.length) ? c.testimoni : d.testimoni,
+                sosial: (c.sosial && c.sosial.length) ? c.sosial : d.sosial
+            };
+        }
+
         function initCloudListeners() {
             if (!db) { setCloudStatus('Firebase gagal diinisialisasi. Muat ulang halaman.', true); return; }
             setCloudStatus('Menghubungkan ke Cloud...', true);
+
+            db.collection('site_content').doc('main').onSnapshot(snap => {
+                cloudSiteContent = snap.exists ? snap.data() : null;
+                renderSiteContent();
+                // Isi draft editor admin hanya sekali per sesi, supaya tidak menimpa
+                // perubahan yang sedang diketik admin saat data cloud lain berubah.
+                if (!profilDraftsInitialized) { initAllDrafts(); profilDraftsInitialized = true; }
+            }, error => {
+                console.error("Gagal memuat konten situs:", error);
+            });
 
             db.collection('artikel').orderBy('createdAt', 'desc').onSnapshot(snap => {
                 cloudArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -658,20 +776,32 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const P = DATA_PORTOFOLIO.profil;
+            renderSiteContent();
+            syncAllViews();
+            initScrollFeatures();
+            initRouter();
+        });
+
+        // Merender ulang semua bagian publik yang bisa diedit admin: profil, statistik,
+        // prinsip, keahlian, pengalaman, testimoni, dan tautan sosial. Dipanggil sekali
+        // saat halaman dimuat, lalu otomatis lagi setiap kali data cloud berubah.
+        function renderSiteContent() {
+            const sc = getSiteContent();
+            const P = sc.profil;
             document.getElementById('pageTitle').innerText = `${P.nama} — ${P.peran}`;
             document.getElementById('heroName').innerText = P.nama; document.getElementById('heroRole').innerText = P.peran; document.getElementById('heroBio').innerText = P.ringkasan;
             document.getElementById('aboutDetail').innerText = P.tentangDetail; document.getElementById('heroBadgeText').innerText = P.statusBadge;
             document.getElementById('mainEmailVal').innerText = P.email; document.getElementById('heroEmailLabel').innerText = P.email; document.getElementById('footerCopyright').innerText = P.copyright;
+            document.getElementById('navName').innerText = P.nama;
 
-            document.getElementById('socialLinksContainer').innerHTML = DATA_PORTOFOLIO.sosial.map((soc, idx) => `
+            document.getElementById('socialLinksContainer').innerHTML = sc.sosial.map((soc, idx) => `
                 <div class="flex items-center gap-2">
                     <a href="${escapeHtml(safeUrl(soc.url))}" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline transition-colors">${escapeHtml(soc.nama)}</a>
-                    ${idx < DATA_PORTOFOLIO.sosial.length - 1 ? '<span class="text-zinc-300 dark:text-zinc-700 mx-1">•</span>' : ''}
+                    ${idx < sc.sosial.length - 1 ? '<span class="text-zinc-300 dark:text-zinc-700 mx-1">•</span>' : ''}
                 </div>
             `).join('');
 
-            document.getElementById('testimonialsContainer').innerHTML = DATA_PORTOFOLIO.testimoni.map(t => `
+            document.getElementById('testimonialsContainer').innerHTML = sc.testimoni.map(t => `
                 <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3">
                     <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">"${escapeHtml(t.pesan)}"</p>
                     <div class="text-xs font-mono">
@@ -681,44 +811,37 @@
                 </div>
             `).join('');
 
-            renderProfileSections();
-            syncAllViews();
-            initScrollFeatures();
-            initRouter();
-        });
-
-        function renderProfileSections() {
-            document.getElementById('statsContainer').innerHTML = DATA_PORTOFOLIO.statistik.map(s => `
+            document.getElementById('statsContainer').innerHTML = sc.statistik.map(s => `
                 <div class="space-y-0.5">
                     <div class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">${escapeHtml(s.nilai)}</div>
                     <div class="text-[11px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400">${escapeHtml(s.label)}</div>
                 </div>
             `).join('');
 
-            document.getElementById('principlesContainer').innerHTML = DATA_PORTOFOLIO.prinsip.map(p => `
+            document.getElementById('principlesContainer').innerHTML = sc.prinsip.map(p => `
                 <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-1.5">
                     <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">${escapeHtml(p.judul)}</h3>
                     <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">${escapeHtml(p.deskripsi)}</p>
                 </div>
             `).join('');
 
-            document.getElementById('skillsContainer').innerHTML = DATA_PORTOFOLIO.keahlian.map(k => `
+            document.getElementById('skillsContainer').innerHTML = sc.keahlian.map(k => `
                 <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 space-y-3">
                     <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full ${k.warnaDot}"></span>
+                        <span class="w-2 h-2 rounded-full ${escapeHtml(k.warnaDot || 'bg-cyan-500')}"></span>
                         <span class="font-semibold text-zinc-900 dark:text-zinc-100">${escapeHtml(k.kategori)}</span>
                     </div>
-                    <ul class="space-y-1.5 text-zinc-500 dark:text-zinc-400">${k.item.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+                    <ul class="space-y-1.5 text-zinc-500 dark:text-zinc-400">${(k.item || []).map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
                 </div>
             `).join('');
 
-            document.getElementById('experienceContainer').innerHTML = DATA_PORTOFOLIO.pengalaman.map(e => `
+            document.getElementById('experienceContainer').innerHTML = sc.pengalaman.map(e => `
                 <div class="space-y-2">
                     <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                         <h3 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">${escapeHtml(e.posisi)} · <span class="font-normal text-zinc-500 dark:text-zinc-400">${escapeHtml(e.perusahaan)}</span></h3>
                         <span class="text-xs font-mono text-zinc-400 whitespace-nowrap">${escapeHtml(e.periode)}</span>
                     </div>
-                    <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">${e.poin.map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}</ul>
+                    <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">${(e.poin || []).map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}</ul>
                 </div>
             `).join('');
         }
@@ -1136,6 +1259,154 @@
             document.querySelectorAll('.admin-tab-btn').forEach(btn => { btn.className = "admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold transition-colors"; });
             document.getElementById(tabId).classList.remove('hidden'); document.getElementById(tabId).classList.add('block');
             document.getElementById('btn' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).className = "admin-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono text-xs font-semibold transition-colors";
+            if (tabId === 'tabProfil' && !profilDraftsInitialized) { initAllDrafts(); profilDraftsInitialized = true; }
+        }
+
+        // =====================================================================
+        // EDITOR PROFIL & KONTEN — panel admin "🧑 Profil & Konten"
+        // Semua bagian ini disimpan ke Firestore: site_content/main (merge per bagian).
+        // =====================================================================
+
+        function initAllDrafts() {
+            const sc = getSiteContent();
+            draftProfil = { ...sc.profil };
+            document.getElementById('adm_nama').value = draftProfil.nama || '';
+            document.getElementById('adm_peran').value = draftProfil.peran || '';
+            document.getElementById('adm_statusBadge').value = draftProfil.statusBadge || '';
+            document.getElementById('adm_ringkasan').value = draftProfil.ringkasan || '';
+            document.getElementById('adm_tentangDetail').value = draftProfil.tentangDetail || '';
+            document.getElementById('adm_email').value = draftProfil.email || '';
+            document.getElementById('adm_copyright').value = draftProfil.copyright || '';
+
+            Object.keys(REPEATER_CONFIGS).forEach(key => initRepeaterDraft(key, sc));
+        }
+
+        async function saveProfil() {
+            const btn = document.getElementById('btnSaveProfil');
+            btn.innerText = 'Menyimpan...'; btn.disabled = true;
+            try {
+                if (!db) throw new Error('Firebase belum terhubung. Muat ulang halaman.');
+                if (!draftProfil.nama || !draftProfil.email) throw new Error('Nama dan email wajib diisi.');
+                await withTimeout(
+                    db.collection('site_content').doc('main').set({ profil: draftProfil, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }),
+                    15000
+                );
+                showToast('✓ Profil tersimpan!');
+            } catch (err) {
+                console.error('Gagal simpan profil:', err);
+                showToast('✗ ' + firestoreErrorMessage(err));
+            } finally {
+                btn.innerText = '💾 Simpan Profil'; btn.disabled = false;
+            }
+        }
+
+        const REPEATER_CONFIGS = {
+            statistik: { fields: [
+                { key: 'nilai', label: 'Nilai', type: 'text', placeholder: '5+ Thn' },
+                { key: 'label', label: 'Label', type: 'text', placeholder: 'Pengalaman' }
+            ] },
+            prinsip: { fields: [
+                { key: 'judul', label: 'Judul', type: 'text' },
+                { key: 'deskripsi', label: 'Deskripsi', type: 'textarea' }
+            ] },
+            keahlian: { fields: [
+                { key: 'kategori', label: 'Kategori', type: 'text', placeholder: 'Frontend' },
+                { key: 'warnaDot', label: 'Warna Penanda', type: 'select', options: ['bg-cyan-500', 'bg-emerald-500', 'bg-indigo-500', 'bg-amber-500', 'bg-rose-500', 'bg-violet-500', 'bg-sky-500'] },
+                { key: 'item', label: 'Daftar Skill (pisahkan dengan koma)', type: 'text', placeholder: 'React, TypeScript, Tailwind' }
+            ], toDraft: x => ({ ...x, item: (x.item || []).join(', ') }),
+               toSave: x => ({ kategori: x.kategori || '', warnaDot: x.warnaDot || 'bg-cyan-500', item: (x.item || '').split(',').map(s => s.trim()).filter(Boolean) }) },
+            pengalaman: { fields: [
+                { key: 'posisi', label: 'Posisi', type: 'text' },
+                { key: 'perusahaan', label: 'Perusahaan', type: 'text' },
+                { key: 'periode', label: 'Periode', type: 'text', placeholder: '2023 — Sekarang' },
+                { key: 'poin', label: 'Poin Pencapaian (satu baris = satu poin)', type: 'textarea' }
+            ], toDraft: x => ({ ...x, poin: (x.poin || []).join('\n') }),
+               toSave: x => ({ posisi: x.posisi || '', perusahaan: x.perusahaan || '', periode: x.periode || '', poin: (x.poin || '').split('\n').map(s => s.trim()).filter(Boolean) }) },
+            testimoni: { fields: [
+                { key: 'nama', label: 'Nama', type: 'text' },
+                { key: 'peran', label: 'Peran / Jabatan', type: 'text' },
+                { key: 'pesan', label: 'Pesan Testimoni', type: 'textarea' }
+            ] },
+            sosial: { fields: [
+                { key: 'nama', label: 'Nama Platform', type: 'text', placeholder: 'GitHub' },
+                { key: 'url', label: 'URL', type: 'text', placeholder: 'https://github.com/username' }
+            ] }
+        };
+
+        function getRepeaterConfig(key) {
+            const cfg = REPEATER_CONFIGS[key];
+            return { fields: cfg.fields, toDraft: cfg.toDraft || (x => ({ ...x })), toSave: cfg.toSave || (x => ({ ...x })) };
+        }
+
+        function initRepeaterDraft(sectionKey, sc) {
+            const cfg = getRepeaterConfig(sectionKey);
+            drafts[sectionKey] = (sc[sectionKey] || []).map(cfg.toDraft);
+            renderRepeaterEditor(sectionKey);
+        }
+
+        function renderRepeaterEditor(sectionKey) {
+            const container = document.getElementById('editor_' + sectionKey);
+            if (!container) return;
+            const cfg = getRepeaterConfig(sectionKey);
+            const items = drafts[sectionKey] || [];
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-xs text-zinc-400 font-mono">Belum ada item. Klik "+ Tambah" di bawah.</p>';
+                return;
+            }
+            container.innerHTML = items.map((item, idx) => `
+                <div class="p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 space-y-2">
+                    ${cfg.fields.map(f => renderRepeaterFieldHtml(sectionKey, idx, f, item[f.key])).join('')}
+                    <button type="button" onclick="removeRepeaterItem('${sectionKey}', ${idx})" class="text-[11px] font-mono text-rose-500 hover:underline">🗑 Hapus item ini</button>
+                </div>
+            `).join('');
+        }
+
+        function renderRepeaterFieldHtml(sectionKey, idx, field, value) {
+            const val = escapeHtml(value || '');
+            const inputEvent = `updateRepeaterField('${sectionKey}', ${idx}, '${field.key}', this.value)`;
+            if (field.type === 'textarea') {
+                return `<div><label class="text-[10px] font-mono text-zinc-400">${escapeHtml(field.label)}</label><textarea rows="2" oninput="${inputEvent}" placeholder="${escapeHtml(field.placeholder || '')}" class="w-full px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs focus:outline-none">${val}</textarea></div>`;
+            }
+            if (field.type === 'select') {
+                return `<div><label class="text-[10px] font-mono text-zinc-400">${escapeHtml(field.label)}</label><select onchange="${inputEvent}" class="w-full px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs focus:outline-none">${field.options.map(o => `<option value="${o}" ${o === value ? 'selected' : ''}>${o}</option>`).join('')}</select></div>`;
+            }
+            return `<div><label class="text-[10px] font-mono text-zinc-400">${escapeHtml(field.label)}</label><input type="text" value="${val}" oninput="${inputEvent}" placeholder="${escapeHtml(field.placeholder || '')}" class="w-full px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs focus:outline-none"></div>`;
+        }
+
+        function updateRepeaterField(sectionKey, idx, key, value) {
+            if (drafts[sectionKey] && drafts[sectionKey][idx]) drafts[sectionKey][idx][key] = value;
+        }
+        function addRepeaterItem(sectionKey) {
+            const cfg = getRepeaterConfig(sectionKey);
+            const empty = {}; cfg.fields.forEach(f => empty[f.key] = f.type === 'select' ? f.options[0] : '');
+            if (!drafts[sectionKey]) drafts[sectionKey] = [];
+            drafts[sectionKey].push(empty);
+            renderRepeaterEditor(sectionKey);
+        }
+        function removeRepeaterItem(sectionKey, idx) {
+            drafts[sectionKey].splice(idx, 1);
+            renderRepeaterEditor(sectionKey);
+        }
+
+        async function saveRepeaterSection(sectionKey) {
+            const btn = document.getElementById('btnSave_' + sectionKey);
+            const originalLabel = btn.innerText;
+            btn.innerText = 'Menyimpan...'; btn.disabled = true;
+            try {
+                if (!db) throw new Error('Firebase belum terhubung. Muat ulang halaman.');
+                const cfg = getRepeaterConfig(sectionKey);
+                const dataToSave = (drafts[sectionKey] || []).map(cfg.toSave);
+                await withTimeout(
+                    db.collection('site_content').doc('main').set({ [sectionKey]: dataToSave, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }),
+                    15000
+                );
+                showToast('✓ Tersimpan!');
+            } catch (err) {
+                console.error('Gagal simpan ' + sectionKey + ':', err);
+                showToast('✗ ' + firestoreErrorMessage(err));
+            } finally {
+                btn.innerText = originalLabel; btn.disabled = false;
+            }
         }
 
         // Simpan preferensi tema supaya tidak reset ke dark tiap reload (bug lama).
@@ -1159,7 +1430,7 @@
         });
 
         function salinEmailAzim() {
-            const email = DATA_PORTOFOLIO.profil.email;
+            const email = getSiteContent().profil.email;
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(email).then(() => showToast('✓ Email disalin!')).catch(() => fallbackCopy(email));
             } else { fallbackCopy(email); }
@@ -1217,7 +1488,7 @@
             formData.append('_template', 'table');
 
             try {
-                const res = await fetch(`https://formsubmit.co/ajax/${DATA_PORTOFOLIO.profil.email}`, {
+                const res = await fetch(`https://formsubmit.co/ajax/${getSiteContent().profil.email}`, {
                     method: 'POST', headers: { 'Accept': 'application/json' }, body: formData
                 });
                 if (!res.ok) throw new Error('Gagal mengirim pesan');
