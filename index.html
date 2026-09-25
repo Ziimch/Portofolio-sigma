@@ -602,6 +602,15 @@
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
+            // PERBAIKAN BUG: di beberapa jaringan seluler/proxy (termasuk beberapa operator
+            // di Indonesia), koneksi streaming default Firestore (WebChannel/HTTP2) diblokir
+            // diam-diam — request tidak error, tapi juga tidak pernah dapat balasan, sehingga
+            // terlihat seperti "stuck menyimpan" sampai akhirnya timeout. Long-polling jauh
+            // lebih tahan terhadap kondisi jaringan seperti ini. Harus dipanggil SEBELUM
+            // operasi Firestore lain (persistence, listener, dst).
+            try {
+                db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
+            } catch (e) { console.warn("Gagal set opsi long-polling:", e); }
             try {
                 db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Cache offline tidak aktif:", err.code));
             } catch (e) { console.warn("Cache offline tidak didukung:", e); }
@@ -715,11 +724,11 @@
                 if (!payload.judul || !payload.deskripsi) throw new Error('Judul dan deskripsi wajib diisi.');
                 if (editId) {
                     payload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await withTimeout(db.collection('artikel').doc(editId).update(payload), 15000);
+                    await withTimeout(db.collection('artikel').doc(editId).update(payload), 30000);
                     showToast('✓ Artikel diperbarui!'); cancelArticleEdit();
                 } else {
                     payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await withTimeout(db.collection('artikel').add(payload), 15000);
+                    await withTimeout(db.collection('artikel').add(payload), 30000);
                     showToast('✓ Artikel sukses di-cloud!');
                 }
                 e.target.reset();
@@ -775,11 +784,11 @@
                 if (!payload.judul || !payload.deskripsi) throw new Error('Judul dan deskripsi wajib diisi.');
                 if (editId) {
                     payload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await withTimeout(db.collection('proyek').doc(editId).update(payload), 15000);
+                    await withTimeout(db.collection('proyek').doc(editId).update(payload), 30000);
                     showToast('✓ Proyek diperbarui!'); cancelProjectEdit();
                 } else {
                     payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await withTimeout(db.collection('proyek').add(payload), 15000);
+                    await withTimeout(db.collection('proyek').add(payload), 30000);
                     showToast('✓ Proyek sukses di-cloud!');
                 }
                 e.target.reset();
@@ -820,7 +829,7 @@
             if (!confirm('Hapus data ini secara permanen dari Cloud?')) return;
             try {
                 if (!db) throw new Error('Firebase belum terhubung. Muat ulang halaman.');
-                await withTimeout(db.collection(collectionName).doc(id).delete(), 15000);
+                await withTimeout(db.collection(collectionName).doc(id).delete(), 30000);
                 showToast('✓ Data dihapus.');
             } catch(err) {
                 console.error('Gagal hapus:', err);
@@ -1521,7 +1530,7 @@
                 if (!draftProfil.nama || !draftProfil.email) throw new Error('Nama dan email wajib diisi.');
                 await withTimeout(
                     db.collection('site_content').doc('main').set({ profil: draftProfil, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }),
-                    15000
+                    30000
                 );
                 showToast('✓ Profil tersimpan!');
             } catch (err) {
@@ -1630,7 +1639,7 @@
                 const dataToSave = (drafts[sectionKey] || []).map(cfg.toSave);
                 await withTimeout(
                     db.collection('site_content').doc('main').set({ [sectionKey]: dataToSave, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }),
-                    15000
+                    30000
                 );
                 showToast('✓ Tersimpan!');
             } catch (err) {
