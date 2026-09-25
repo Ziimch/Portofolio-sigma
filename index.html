@@ -49,6 +49,27 @@
         .reveal.in-view { opacity: 1; transform: translateY(0); }
         .filter-chip.active { background: #0ea5e9; color: white; border-color: #0ea5e9; }
         .honeypot-field { position: absolute; left: -9999px; top: -9999px; opacity: 0; height: 0; width: 0; pointer-events: none; }
+
+        /* Spotlight kursor di hero (desktop saja) */
+        #heroSpotlight { position: absolute; inset: 0; pointer-events: none; border-radius: 1rem; opacity: 0; transition: opacity 0.3s ease;
+            background: radial-gradient(500px circle at var(--x, 50%) var(--y, 50%), rgba(14,165,233,0.08), transparent 60%); }
+        #hero { position: relative; }
+        @media (pointer: fine) { #hero:hover #heroSpotlight { opacity: 1; } }
+
+        /* Kursor berkedip untuk efek typewriter */
+        #heroTypeCursor { display: inline-block; width: 2px; height: 1em; vertical-align: text-bottom; background: currentColor; margin-left: 2px; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { #heroTypeCursor { animation: none; } }
+
+        /* Tampilan cetak/PDF: ringkas, tanpa nav/tombol/admin, hitam-putih */
+        @media print {
+            header, footer, #scrollProgress, #backToTop, .no-print, #adminLoginModal, #adminDashboard, #toast, #heroSpotlight, #heroTypeCursor { display: none !important; }
+            body { background: white !important; color: black !important; }
+            #mainHome { max-width: 100% !important; padding: 0 !important; }
+            #hero, section { break-inside: avoid; border-color: #ccc !important; }
+            a { color: black !important; text-decoration: none !important; }
+            .dark\:bg-zinc-950, .dark\:bg-zinc-900\/30, .dark\:bg-zinc-900 { background: white !important; }
+        }
     </style>
 </head>
 <body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-zinc-200 dark:selection:bg-zinc-800">
@@ -73,9 +94,6 @@
                 <a href="#kontak" data-section="kontak" class="nav-link hover:text-zinc-900 dark:hover:text-zinc-100">Kontak</a>
             </nav>
             <div class="flex items-center gap-2">
-                <button onclick="handleLockIconClick()" title="Akses Sistem" aria-label="Akses admin" class="p-2 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                </button>
                 <button id="themeToggle" aria-label="Ganti tema terang/gelap" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <svg id="moonIcon" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg id="sunIcon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -100,6 +118,7 @@
     <!-- ======================= HALAMAN BERANDA ======================= -->
     <main id="mainHome" class="max-w-4xl mx-auto px-6 py-12 sm:py-20 space-y-20">
         <section id="hero" class="space-y-6">
+            <div id="heroSpotlight"></div>
             <div id="heroBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono border border-emerald-500/20">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="heroBadgeText">Tersedia untuk Pekerjaan Full-Time & Konsultasi</span>
@@ -108,7 +127,7 @@
                 <img id="heroAvatar" src="1000003180.jpg" alt="Foto Profil" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-zinc-200 dark:border-zinc-800 shadow-md flex-shrink-0" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop';">
                 <div class="space-y-1">
                     <h1 id="heroName" class="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Azim</h1>
-                    <p id="heroRole" class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400"></p>
+                    <p class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400"><span id="heroRole"></span><span id="heroTypeCursor"></span></p>
                 </div>
             </div>
             <p id="heroBio" class="text-base sm:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl"></p>
@@ -169,6 +188,10 @@
                         </div>
                     </div>
                     <div id="socialLinksContainer" class="flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-500 pt-2"></div>
+                    <div class="flex flex-wrap gap-2 pt-2 no-print">
+                        <button onclick="downloadVCard()" class="px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-1.5">📇 Simpan Kontak</button>
+                        <button onclick="window.print()" class="px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-1.5">🖨️ Cetak / Simpan PDF</button>
+                    </div>
                 </div>
                 <div class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 relative">
                     <form onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs" novalidate>
@@ -198,7 +221,10 @@
 
     <footer id="mainFooter" class="border-t border-zinc-200 dark:border-zinc-800 py-8 bg-zinc-50 dark:bg-zinc-950">
         <div class="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-400">
-            <div id="footerCopyright"></div>
+            <div class="flex items-center gap-3">
+                <span id="footerCopyright"></span>
+                <span id="visitorCounter" class="hidden text-zinc-400" title="Total kunjungan">· 👀 <span id="visitorCountVal">0</span></span>
+            </div>
             <a href="#hero" class="hover:text-zinc-900 dark:hover:text-zinc-100">Ke Atas ↑</a>
         </div>
     </footer>
@@ -607,6 +633,9 @@
             if (!db) { setCloudStatus('Firebase gagal diinisialisasi. Muat ulang halaman.', true); return; }
             setCloudStatus('Menghubungkan ke Cloud...', true);
 
+            watchVisitorCounter();
+            bumpVisitorCounter();
+
             db.collection('site_content').doc('main').onSnapshot(snap => {
                 cloudSiteContent = snap.exists ? snap.data() : null;
                 renderSiteContent();
@@ -789,7 +818,7 @@
             const sc = getSiteContent();
             const P = sc.profil;
             document.getElementById('pageTitle').innerText = `${P.nama} — ${P.peran}`;
-            document.getElementById('heroName').innerText = P.nama; document.getElementById('heroRole').innerText = P.peran; document.getElementById('heroBio').innerText = P.ringkasan;
+            document.getElementById('heroName').innerText = P.nama; document.getElementById('heroBio').innerText = P.ringkasan;
             document.getElementById('aboutDetail').innerText = P.tentangDetail; document.getElementById('heroBadgeText').innerText = P.statusBadge;
             document.getElementById('mainEmailVal').innerText = P.email; document.getElementById('heroEmailLabel').innerText = P.email; document.getElementById('footerCopyright').innerText = P.copyright;
             document.getElementById('navName').innerText = P.nama;
@@ -844,6 +873,92 @@
                     <ul class="space-y-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 list-disc list-inside">${(e.poin || []).map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}</ul>
                 </div>
             `).join('');
+
+            startHeroTypewriter(sc);
+        }
+
+        // ---------- Fitur: efek ketik-mesin-tik bergantian di bawah nama (hero) ----------
+        // Otomatis mengambil peran utama + nama-nama kategori keahlian sebagai variasi teks,
+        // jadi ikut berubah kalau admin mengedit Profil/Keahlian — tidak perlu data terpisah.
+        let heroTypewriterTimer = null;
+        function startHeroTypewriter(sc) {
+            clearTimeout(heroTypewriterTimer);
+            const el = document.getElementById('heroRole');
+            if (!el) return;
+
+            const phrases = [sc.profil.peran, ...sc.keahlian.slice(0, 3).map(k => k.kategori + ' Specialist')].filter(Boolean);
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (phrases.length <= 1 || reduceMotion) { el.textContent = phrases[0] || ''; return; }
+
+            let phraseIdx = 0, charIdx = 0, deleting = false;
+            function tick() {
+                const current = phrases[phraseIdx];
+                if (!deleting) {
+                    charIdx++;
+                    el.textContent = current.slice(0, charIdx);
+                    if (charIdx === current.length) { deleting = true; heroTypewriterTimer = setTimeout(tick, 1800); return; }
+                    heroTypewriterTimer = setTimeout(tick, 55);
+                } else {
+                    charIdx--;
+                    el.textContent = current.slice(0, charIdx);
+                    if (charIdx === 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; heroTypewriterTimer = setTimeout(tick, 300); return; }
+                    heroTypewriterTimer = setTimeout(tick, 25);
+                }
+            }
+            tick();
+        }
+
+        // ---------- Fitur: spotlight lembut mengikuti kursor di hero (desktop saja) ----------
+        (function setupHeroSpotlight() {
+            const hero = document.getElementById('hero');
+            const spotlight = document.getElementById('heroSpotlight');
+            if (!hero || !spotlight || !window.matchMedia('(pointer: fine)').matches) return;
+            hero.addEventListener('mousemove', (e) => {
+                const rect = hero.getBoundingClientRect();
+                spotlight.style.setProperty('--x', (e.clientX - rect.left) + 'px');
+                spotlight.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+            });
+        })();
+
+        // ---------- Fitur: unduh kontak sebagai vCard (.vcf) ----------
+        function downloadVCard() {
+            const P = getSiteContent().profil;
+            const vcard = [
+                'BEGIN:VCARD', 'VERSION:3.0',
+                `FN:${P.nama}`, `TITLE:${P.peran}`, `EMAIL;TYPE=INTERNET:${P.email}`,
+                `NOTE:${(P.ringkasan || '').replace(/\n/g, ' ')}`,
+                'END:VCARD'
+            ].join('\n');
+            const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = (P.nama || 'kontak').replace(/\s+/g, '-').toLowerCase() + '.vcf';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('✓ Kartu kontak diunduh!');
+        }
+
+        // ---------- Fitur: penghitung pengunjung (opsional, gagal diam-diam kalau rule belum diizinkan) ----------
+        function watchVisitorCounter() {
+            if (!db) return;
+            db.collection('stats').doc('visitors').onSnapshot(snap => {
+                if (!snap.exists) return;
+                const count = snap.data().count || 0;
+                document.getElementById('visitorCountVal').innerText = count.toLocaleString('id-ID');
+                document.getElementById('visitorCounter').classList.remove('hidden');
+            }, () => { /* diam-diam disembunyikan kalau rule menolak baca, bukan fitur inti */ });
+        }
+        async function bumpVisitorCounter() {
+            if (!db || sessionStorage.getItem('azim_visited')) return;
+            try {
+                const ref = db.collection('stats').doc('visitors');
+                await withTimeout(db.runTransaction(async (tx) => {
+                    const doc = await tx.get(ref);
+                    const current = doc.exists ? (doc.data().count || 0) : 0;
+                    tx.set(ref, { count: current + 1, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+                }), 10000);
+                sessionStorage.setItem('azim_visited', '1');
+            } catch (e) { console.warn('Penghitung pengunjung tidak aktif (opsional):', e); }
         }
 
         function projectCardHtml(proj, opts) {
@@ -1034,6 +1149,16 @@
             const ghEl = document.getElementById('pageGithub');
             const allSubpages = [listEl, detailEl, ghEl];
 
+            // Jalur rahasia untuk membuka panel admin — tidak ada tombolnya di UI publik.
+            // Ganti ADMIN_ACCESS_HASH di bawah dengan path rahasia pilihan Anda sendiri,
+            // lalu simpan URL itu sebagai bookmark pribadi di perangkat Anda.
+            if (hash === ADMIN_ACCESS_HASH) {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+                handleLockIconClick();
+                route();
+                return;
+            }
+
             if (hash.startsWith('#/proyek/')) {
                 const slug = decodeURIComponent(hash.replace('#/proyek/', ''));
                 homeEl.classList.add('hidden'); footerEl.classList.add('hidden');
@@ -1194,8 +1319,16 @@
         function setGhLanguageFilter(lang) { activeGhLanguage = lang; renderGithubRepos(); }
 
         // ---------- Login admin via Firebase Authentication (bukan lagi kredensial statis) ----------
-        // Batas percobaan login untuk memperlambat brute-force sederhana di sisi klien.
-        // (Firebase juga menerapkan rate-limiting-nya sendiri di sisi server untuk percobaan login yang gagal.)
+        // Tidak ada tombol admin yang terlihat di halaman publik. Ada 2 cara rahasia membukanya:
+        //  1) Ketik URL rahasia ini di address bar (lalu Enter): lihat ADMIN_ACCESS_HASH di bawah.
+        //  2) Ketuk logo/nama di pojok kiri atas sebanyak 5x berturut-turut dalam 2 detik (enak di HP).
+        // CATATAN JUJUR: karena ini situs statis (semua kode terkirim ke browser), siapa pun yang
+        // membuka "view source"/DevTools tetap BISA menemukan jalur rahasia ini kalau mereka niat
+        // mencarinya. Yang benar-benar melindungi Anda adalah Firebase Authentication + Firestore
+        // Rules (email admin spesifik) yang sudah terpasang — jalur rahasia ini cuma menyembunyikan
+        // pintunya dari pengunjung biasa, bukan pengganti kunci sungguhan.
+        const ADMIN_ACCESS_HASH = '#/gerbang-masuk-azim';
+
         let loginAttempts = 0;
         let loginLockedUntil = 0;
         let currentAdminUser = null;
@@ -1206,6 +1339,23 @@
                 if (!user) closeAdminDashboard();
             });
         }
+
+        // Ketuk logo 5x berturut-turut dalam 2 detik untuk membuka login admin (alternatif di HP).
+        (function setupSecretLogoTap() {
+            let tapCount = 0; let tapTimer = null;
+            const logoLink = document.querySelector('header a[href="#hero"]');
+            if (!logoLink) return;
+            logoLink.addEventListener('click', (e) => {
+                tapCount++;
+                clearTimeout(tapTimer);
+                tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
+                if (tapCount >= 5) {
+                    tapCount = 0; clearTimeout(tapTimer);
+                    e.preventDefault();
+                    handleLockIconClick();
+                }
+            });
+        })();
 
         document.getElementById('adminFormLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
